@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlock Premium Access - Naruto Anime</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #121212;
+            font-family: 'Arial', sans-serif;
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8) !important;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #FF6200, #1E3A8A, #4C1D95);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .unlock-container {
+            background-color: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .episode-preview {
+            background-color: rgba(40, 40, 40, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .episode-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .episode-info {
+            padding: 20px;
+        }
+        
+        .feature-list {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+        }
+        
+        .feature-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .feature-icon {
+            background-color: rgba(255, 165, 0, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            color: #FFA500;
+            flex-shrink: 0;
+        }
+        
+        .cta-button {
+            background: linear-gradient(to right, #FF6200, #FF8C00);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(255, 98, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 98, 0, 0.4);
+            background: linear-gradient(to right, #FF7000, #FFA000);
+        }
+        
+        .timer-container {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .timer-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #FFA500;
+        }
+        
+        .timer-label {
+            font-size: 1rem;
+            color: #CCC;
+        }
+        
+        .subscription-details {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .text-premium {
+            color: #FFA500;
+            font-weight: bold;
+        }
+        
+        .blur-overlay {
+            position: relative;
+        }
+        
+        .blur-overlay::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .blur-overlay::before {
+            content: "🔒 Locked Content";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .naruto-theme {
+            border-color: #FF6200 !important;
+            box-shadow: 0 0 15px rgba(255, 98, 0, 0.2);
+        }
+        
+        .shippuden-theme {
+            border-color: #1E3A8A !important;
+            box-shadow: 0 0 15px rgba(30, 58, 138, 0.2);
+        }
+        
+        .boruto-theme {
+            border-color: #4C1D95 !important;
+            box-shadow: 0 0 15px rgba(76, 29, 149, 0.2);
+        }
+        
+        /* Subscription badge */
+        .subscription-badge {
+            position: fixed;
+            top: 80px;
+            right: 10px;
+            background: linear-gradient(135deg, #FFA500, #FF6200);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .countdown-container {
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Naruto Anime</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Naruto.html">Naruto Classic</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="NarutoShippuden.html">Naruto Shippuden</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Boruto.html">Boruto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">History</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Subscription Badge (shown when active) -->
+    <div class="subscription-badge" id="subscription-badge">
+        <i class="bi bi-stars"></i> Premium Active
+        <div class="countdown-container">
+            <span id="subscription-time">23:59:59</span>
+        </div>
+    </div>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Unlock Premium Access By Ads</h1>
+            <p class="lead">Get 24-hour access to all Naruto episodes</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Episode Preview -->
+                <div class="episode-preview" id="episode-container">
+                    <!-- Episode image and info will be placed here -->
+                </div>
+                
+                <!-- Unlock Container -->
+                <div class="unlock-container">
+                    <h2>Premium Content Locked</h2>
+                    <p>To watch this episode and gain 24-hour access to all Naruto content, complete the steps below:</p>
+                    
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-play-circle"></i>
+                            </div>
+                            <div>
+                                <strong>Ad-Free Experience</strong>
+                                <p class="text-muted mb-0">Watch all episodes without interruptions</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div>
+                                <strong>24-Hour Access</strong>
+                                <p class="text-muted mb-0">Unlimited viewing for a full day</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-collection-play"></i>
+                            </div>
+                            <div>
+                                <strong>All Episodes Included</strong>
+                                <p class="text-muted mb-0">Naruto, Shippuden, and Boruto series</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA - Remove timer and enable button immediately -->
+                    <button id="unlock-button" class="cta-button">
+                        <i class="bi bi-unlock"></i> Unlock Premium Access By Ads
+                    </button>
+                    
+                    <p class="text-muted">By clicking the button, you'll be redirected to complete a quick offer</p>
+                    
+                    <div class="mt-3">
+                        <p class="mb-1" style="color: #FFA500;"><i class="bi bi-heart-fill"></i> Support the Developer</p>
+                        <p class="text-muted small">Your participation helps maintain this service and add more episodes. Thank you!</p>
+                    </div>
+                    
+                    <div class="subscription-details">
+                        <p>Already have a subscription? <a href="#" id="check-subscription">Check here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get episode parameters from URL
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+        
+        const series = getParameterByName('series'); // naruto, shippuden, or boruto
+        const episodeNumber = getParameterByName('episode');
+        const fileId = getParameterByName('fileId');
+        
+        // Check if user has active subscription
+        function checkSubscription() {
+            const subscription = JSON.parse(localStorage.getItem('narutoSubscription') || 'null');
+            
+            if (subscription && subscription.expiryDate) {
+                const now = new Date().getTime();
+                const expiryTime = new Date(subscription.expiryDate).getTime();
+                
+                if (now < expiryTime) {
+                    // Subscription is active, redirect to player
+                    goToPlayer();
+                    return true;
+                } else {
+                    // Subscription expired, remove it
+                    localStorage.removeItem('narutoSubscription');
+                }
+            }
+            
+            return false;
+        }
+        
+        // Generate encrypted token for validation
+        function generateToken(series, episode, fileId) {
+            // Simple encryption - in a real system you'd use stronger encryption
+            const timestamp = new Date().getTime();
+            const data = `${series}|${episode}|${fileId}|${timestamp}`;
+            
+            // Base64 encode - this is for demo purposes only
+            // In production, use a proper encryption algorithm
+            return btoa(data);
+        }
+        
+        // Redirect to player with token
+        function goToPlayer() {
+            const token = generateToken(series, episodeNumber, fileId);
+            window.location.href = `player.html?series=${series}&episode=${episodeNumber}&fileId=${fileId}&token=${token}`;
+        }
+        
+        // Setup timer for unlock button
+        function setupUnlockTimer() {
+            const timerValue = document.getElementById('timer-value');
+            const unlockButton = document.getElementById('unlock-button');
+            const timerContainer = document.getElementById('timer-container');
+            let secondsLeft = 10;
+            
+            const countdown = setInterval(() => {
+                secondsLeft--;
+                timerValue.textContent = secondsLeft;
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(countdown);
+                    timerContainer.style.display = 'none';
+                    unlockButton.disabled = false;
+                }
+            }, 1000);
+        }
+        
+        // Initialize the episode preview
+        function initializeEpisodePreview() {
+            const container = document.getElementById('episode-container');
+            
+            // Determine series info and styling
+            let seriesName, posterImage, themeClass;
+            
+            switch(series) {
+                case 'naruto':
+                    seriesName = 'Naruto Classic';
+                    posterImage = 'posternarutoclassic.jpg';
+                    themeClass = 'naruto-theme';
+                    break;
+                case 'shippuden':
+                    seriesName = 'Naruto Shippuden';
+                    posterImage = 'postershippuden.jpg';
+                    themeClass = 'shippuden-theme';
+                    break;
+                case 'boruto':
+                    seriesName = 'Boruto';
+                    posterImage = 'posterboruto.jpg';
+                    themeClass = 'boruto-theme';
+                    break;
+                default:
+                    seriesName = 'Naruto Anime';
+                    posterImage = 'posternarutoclassic.jpg';
+                    themeClass = 'naruto-theme';
+            }
+            
+            // Add the theme class to the preview container
+            container.classList.add(themeClass);
+            
+            // Update the container with episode info
+            container.innerHTML = `
+                <div class="blur-overlay">
+                    <img src="${posterImage}" alt="${seriesName}" class="episode-image">
+                </div>
+                <div class="episode-info">
+                    <h3>${seriesName} - Episode ${episodeNumber}</h3>
+                    <p class="text-muted">Unlock premium access to watch this episode</p>
+                </div>
+            `;
+            
+            // Update page title
+            document.title = `Unlock ${seriesName} Episode ${episodeNumber} - Naruto Anime`;
+        }
+        
+        // Show active subscription badge if subscription exists
+        function updateSubscriptionBadge() {
+            const subscription = JSON.parse(localStorage.getItem('narutoSubscription') || 'null');
+            const badge = document.getElementById('subscription-badge');
+            
+            if (subscription && subscription.expiryDate) {
+                const now = new Date().getTime();
+                const expiryTime = new Date(subscription.expiryDate).getTime();
+                
+                if (now < expiryTime) {
+                    // Calculate time remaining
+                    const timeRemaining = expiryTime - now;
+                    const hoursRemaining = Math.floor(timeRemaining / (1000 * 60 * 60));
+                    const minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const secondsRemaining = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                    // Update badge text
+                    document.getElementById('subscription-time').textContent = 
+                        `${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`;
+                    
+                    // Show badge
+                    badge.style.display = 'block';
+                    
+                    // Update the badge every second
+                    setTimeout(updateSubscriptionBadge, 1000);
+                } else {
+                    // Hide badge if subscription expired
+                    badge.style.display = 'none';
+                    localStorage.removeItem('narutoSubscription');
+                }
+            } else {
+                // No subscription
+                badge.style.display = 'none';
+            }
+        }
+        
+        // When the document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the page
+            initializeEpisodePreview();
+            updateSubscriptionBadge();
+            
+            // Check if user already has a subscription
+            if (checkSubscription()) {
+                return; // Redirect handled by checkSubscription
+            }
+            
+            // Setup check subscription button
+            document.getElementById('check-subscription').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (checkSubscription()) {
+                    alert('You have an active subscription! Redirecting to the episode...');
+                } else {
+                    alert('You don\'t have an active subscription. Please complete the offer to gain access.');
+                }
+            });
+            
+            // Setup unlock button - no timer, enable by default
+            const unlockButton = document.getElementById('unlock-button');
+            unlockButton.disabled = false;
+            
+            // Handle unlock button click
+            unlockButton.addEventListener('click', function() {
+                // Create a unique ID for tracking - use simpler format
+                const trackingId = Math.floor(Math.random() * 1000000).toString();
+                
+                // Store the details in localStorage to retrieve after completing GPLINK process
+                localStorage.setItem('pendingUnlock', JSON.stringify({
+                    series: series,
+                    episode: episodeNumber,
+                    fileId: fileId,
+                    trackingId: trackingId,
+                    timestamp: new Date().getTime()
+                }));
+                
+                // Generate return URL with tracking ID - ensure this is a complete URL
+                const fullUrl = window.location.protocol + '//' + window.location.host;
+                const returnUrl = `${fullUrl}/complete-unlock.html?id=${trackingId}`;
+                console.log("Return URL:", returnUrl);
+                
+                // Encode the return URL for the API
+                const encodedReturnUrl = encodeURIComponent(returnUrl);
+                
+                // Format the GPLinks API URL with the developer token
+                const apiToken = 'b52648892a578ea3d98f6c38a431e1a264411bba';
+                const uniqueAlias = 'naruto_' + Math.floor(Math.random() * 1000000); // Generate a random unique alias
+                const gpLinksApiUrl = `https://api.gplinks.com/api?api=${apiToken}&url=${encodedReturnUrl}&alias=${uniqueAlias}`;
+                
+                // Show loading state
+                unlockButton.disabled = true;
+                unlockButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+                
+                // Make a request to the GPLinks API
+                fetch(gpLinksApiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('GPLinks API response:', data);
+                        if (data.status === 'error') {
+                            // Handle error
+                            console.error('GPLinks API error:', data.message);
+                            
+                            // Try with a different alias if the current one exists
+                            if (data.message && data.message[0] === "Alias already exists.") {
+                                console.log('Trying with a different alias...');
+                                // Create a new unique alias with timestamp
+                                const newUniqueAlias = 'naruto_' + Date.now();
+                                const newGpLinksApiUrl = `https://api.gplinks.com/api?api=${apiToken}&url=${encodedReturnUrl}&alias=${newUniqueAlias}`;
+                                
+                                // Retry the request
+                                return fetch(newGpLinksApiUrl).then(response => response.json());
+                            } else {
+                                // Display error message for other types of errors
+                                alert('Error creating link: ' + (data.message instanceof Array ? data.message.join(', ') : data.message));
+                                unlockButton.disabled = false;
+                                unlockButton.innerHTML = '<i class="bi bi-unlock"></i> Unlock Premium Access';
+                                throw new Error('GPLinks API error');
+                            }
+                        } else {
+                            return data;
+                        }
+                    })
+                    .then(data => {
+                        if (data.shortenedUrl) {
+                            // Redirect to the shortened URL
+                            window.location.href = data.shortenedUrl;
+                        } else {
+                            // Handle case where no URL was returned
+                            console.error('No shortened URL returned from GPLinks API');
+                            alert('Failed to create GPLinks redirect. Please try again.');
+                            unlockButton.disabled = false;
+                            unlockButton.innerHTML = '<i class="bi bi-unlock"></i> Unlock Premium Access';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error calling GPLinks API:', error);
+                        alert('An error occurred. Please try again.');
+                        unlockButton.disabled = false;
+                        unlockButton.innerHTML = '<i class="bi bi-unlock"></i> Unlock Premium Access';
+                    });
+            });
+        });
+    </script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

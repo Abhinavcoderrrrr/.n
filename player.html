@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player - Naruto Anime</title>
+    <!-- Favicon -->
+    <link rel="icon" href="logo.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Favicon X-Images library -->
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+    <meta name="msapplication-TileImage" content="logo.png">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.5s ease;
+        }
+        
+        /* Naruto Classic Theme */
+        body.theme-naruto {
+            background-color: #FFA500; /* Orange background */
+        }
+        
+        body.theme-naruto .navbar {
+            background-color: #FF6200 !important; /* Darker orange for navbar */
+        }
+        
+        body.theme-naruto .nav-btn {
+            background-color: #FF6200;
+        }
+        
+        body.theme-naruto .nav-btn:hover {
+            background-color: #E55A00;
+        }
+        
+        body.theme-naruto .loading-spinner {
+            border-top-color: #FF6200;
+        }
+        
+        /* Naruto Shippuden Theme */
+        body.theme-shippuden {
+            background-color: #1E3A8A; /* Deep blue background */
+        }
+        
+        body.theme-shippuden .navbar {
+            background-color: #172554 !important; /* Darker blue for navbar */
+        }
+        
+        body.theme-shippuden .nav-btn {
+            background-color: #172554;
+        }
+        
+        body.theme-shippuden .nav-btn:hover {
+            background-color: #0F172A;
+        }
+        
+        body.theme-shippuden .loading-spinner {
+            border-top-color: #172554;
+        }
+        
+        /* Boruto Theme */
+        body.theme-boruto {
+            background-color: #4C1D95; /* Purple background */
+        }
+        
+        body.theme-boruto .navbar {
+            background-color: #3B0764 !important; /* Darker purple for navbar */
+        }
+        
+        body.theme-boruto .nav-btn {
+            background-color: #3B0764;
+        }
+        
+        body.theme-boruto .nav-btn:hover {
+            background-color: #2E0052;
+        }
+        
+        body.theme-boruto .loading-spinner {
+            border-top-color: #3B0764;
+        }
+        
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.6) !important;
+            transition: background-color 0.5s ease;
+        }
+        
+        .player-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        #player-frame {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            background-color: #000;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .loading-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid #FFA500;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+            transition: border-top-color 0.5s ease;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-container {
+            background-color: rgba(255, 87, 87, 0.2);
+            border-left: 4px solid #ff5757;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+        
+        .episode-info {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .nav-btn {
+            background-color: #FFA500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin: 0 5px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        
+        .nav-btn:hover {
+            background-color: #FF8C00;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Naruto Anime</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Naruto.html">Naruto Classic</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="NarutoShippuden.html">Naruto Shippuden</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Boruto.html">Boruto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">History</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container player-container">
+        <!-- Episode Information -->
+        <div class="episode-info">
+            <h2 id="episode-title">Loading episode...</h2>
+        </div>
+        
+        <!-- Loading Animation -->
+        <div class="loading-container" id="loading-container">
+            <div class="loading-spinner"></div>
+            <h4>Loading video...</h4>
+            <p id="loading-message">Preparing your episode</p>
+        </div>
+                
+        <!-- Error Container -->
+        <div class="error-container" id="error-container">
+            <h4><i class="bi bi-exclamation-triangle"></i> Error Loading Video</h4>
+            <p id="error-message">An error occurred while loading the video.</p>
+            <button class="btn btn-outline-light" onclick="location.reload()">Try Again</button>
+        </div>
+                
+        <!-- Video Player -->
+        <iframe id="player-frame" style="display: none;" allowfullscreen></iframe>
+        
+        <!-- Episode Navigation -->
+        <div class="d-flex justify-content-between mt-3">
+            <button id="prev-episode" class="nav-btn" onclick="navigateEpisode(-1)">
+                <i class="bi bi-skip-backward-fill"></i> Previous Episode
+            </button>
+            <button id="back-to-list" class="nav-btn" onclick="backToSeries()">
+                <i class="bi bi-grid-fill"></i> Back to Episodes
+            </button>
+            <button id="next-episode" class="nav-btn" onclick="navigateEpisode(1)">
+                Next Episode <i class="bi bi-skip-forward-fill"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Player Script -->
+    <script>
+        // Global variables
+        let currentSeries = '';
+        let currentEpisode = 0;
+        
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Extract parameters from URL
+            currentSeries = urlParams.get('series');
+            currentEpisode = parseInt(urlParams.get('episode')) || 1;
+            
+            if (!currentSeries) {
+                showError("Missing series parameter");
+                return;
+            }
+            
+            // Apply theme based on series
+            applyTheme();
+            
+            // Update episode title and navigation buttons
+            updateEpisodeInfo();
+            
+            // Load the video
+            loadVideo();
+            
+            // Save to watch history
+            saveToHistory();
+        });
+        
+        // Apply theme based on the series
+        function applyTheme() {
+            // Remove all theme classes
+            document.body.classList.remove('theme-naruto', 'theme-shippuden', 'theme-boruto');
+            
+            // Add the appropriate theme class
+            if (currentSeries === 'naruto') {
+                document.body.classList.add('theme-naruto');
+                // Set the active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.getAttribute('href') === 'Naruto.html') {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            } else if (currentSeries === 'shippuden') {
+                document.body.classList.add('theme-shippuden');
+                // Set the active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.getAttribute('href') === 'NarutoShippuden.html') {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            } else if (currentSeries === 'boruto') {
+                document.body.classList.add('theme-boruto');
+                // Set the active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.getAttribute('href') === 'Boruto.html') {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+        }
+        
+        // Function to load video directly without secure API
+        function loadVideo() {
+            try {
+                // Show loading animation
+                showLoading("Preparing your video...");
+                
+                // Get the episode links based on the series
+                let episodeLinks;
+                
+                if (currentSeries === 'naruto') {
+                    episodeLinks = getNarutoEpisodeLinks();
+                } else if (currentSeries === 'shippuden') {
+                    episodeLinks = getShippudenEpisodeLinks();
+                } else if (currentSeries === 'boruto') {
+                    episodeLinks = getBorutoEpisodeLinks();
+                } else {
+                    throw new Error('Unknown series');
+                }
+                
+                // Get the file ID for the current episode
+                const link = episodeLinks[currentEpisode];
+                
+                if (!link) {
+                    throw new Error('Episode not available');
+                }
+                
+                // Extract file ID from Google Drive link
+                const fileId = extractFileIdFromLink(link);
+                
+                if (!fileId) {
+                    throw new Error('Invalid video link');
+                }
+                
+                // Set up the Google Drive embed URL
+                const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                
+                // Set the iframe source to the embed URL
+                const playerFrame = document.getElementById('player-frame');
+                playerFrame.src = embedUrl;
+                
+                // Show the player when it's ready
+                playerFrame.onload = function() {
+                    hideLoading();
+                    playerFrame.style.display = 'block';
+                };
+                
+                // Fallback in case onload doesn't trigger
+                setTimeout(function() {
+                    hideLoading();
+                    playerFrame.style.display = 'block';
+                }, 5000);
+                
+            } catch (error) {
+                console.error('Error loading video:', error);
+                showError(error.message || 'Failed to load video');
+            }
+        }
+
+        // Extract file ID from Google Drive link
+        function extractFileIdFromLink(link) {
+            // Match patterns like https://drive.google.com/file/d/FILEID/view
+            const match = link.match(/\/file\/d\/([^\/]+)/);
+            if (match && match[1]) {
+                return match[1];
+            }
+
+            // Match patterns like https://drive.google.com/open?id=FILEID
+            const idMatch = link.match(/[?&]id=([^&]+)/);
+            if (idMatch && idMatch[1]) {
+                return idMatch[1];
+            }
+
+            return null;
+        }
+        
+        // Functions to get episode links for each series
+        function getNarutoEpisodeLinks() {
+            return {
+                1: "https://drive.google.com/file/d/1P-ol8Xmr7wH3V7AWrGUKPjuqQuWktqdz/view?usp=sharing",
+                2: "https://drive.google.com/file/d/1pRd8-zvUoO4q7DjfG4rPFWy3MBgkjTgy/view?usp=sharing",
+                3: "https://drive.google.com/file/d/1YO2u9PiXaugCdMHK-LneZs9MD9JRAHOR/view?usp=sharing",
+                4: "https://drive.google.com/file/d/1QDdhEz8p0EX6MFF_DjIup3QBf5169hAY/view?usp=sharing",
+                5: "https://drive.google.com/file/d/1PeHszLrHpyNL43a1SnmMUIhasVq-PuAO/view?usp=sharing",
+                6: "https://drive.google.com/file/d/1aSUi1hy5jDtObU35fFTvIo9GX1Ny1lgU/view?usp=sharing",
+                7: "https://drive.google.com/file/d/1UIxj4uYYmXdOuh4mVMvLXqZwhMzcOM6h/view?usp=sharing",
+                8: "https://drive.google.com/file/d/1ObZno2NxTqZj8_o6lEnvdNDlMDXNqG-M/view?usp=sharing",
+                9: "https://drive.google.com/file/d/1OdNts24NfNwutvB6wFqDpYYiyJGOt-3k/view?usp=sharing",
+                10: "https://drive.google.com/file/d/1OhXTYTopPcUnupAp32rRIKQWnUvy4VcU/view?usp=sharing",
+                11: "https://drive.google.com/file/d/1P0C6dZMbb7nogNg1z08Vioup8BjCIrcp/view?usp=sharing",
+                12: "https://drive.google.com/file/d/1Ol8o0JcPtl23Z5HCwDPFrom7YHZUBF90/view?usp=sharing",
+                13: "https://drive.google.com/file/d/1P1epmQtlZT4yIs3GMo6lwVhh2b4IKmyF/view?usp=sharing",
+                14: "https://drive.google.com/file/d/1PA1N5KAf4HcOLadOsTTDe34Vykth316T/view?usp=sharing",
+                15: "https://drive.google.com/file/d/1PAL8yuUXwuazjr2EH40cRYZVmeEuGsPO/view?usp=sharing",
+                16: "https://drive.google.com/file/d/1Ohy0HNWSOn_G89SymkW7hMLI4Re-pZ2A/view?usp=sharing",
+                17: "https://drive.google.com/file/d/1PDLtaiw9a9Zmh5bSbUY0Ye1OtdueBxmo/view?usp=sharing"
+                // Add more episodes as needed
+            };
+        }
+        
+        function getShippudenEpisodeLinks() {
+            return {
+                // Add Shippuden episodes as they become available
+            };
+        }
+        
+        function getBorutoEpisodeLinks() {
+            return {
+                // Add Boruto episodes as they become available
+            };
+        }
+        
+        // Update episode title and details
+        function updateEpisodeInfo() {
+            const seriesNames = {
+                'naruto': 'Naruto Classic',
+                'shippuden': 'Naruto Shippuden',
+                'boruto': 'Boruto: Naruto Next Generations'
+            };
+            
+            const seriesName = seriesNames[currentSeries] || currentSeries;
+            document.getElementById('episode-title').textContent = `${seriesName} - Episode ${currentEpisode}`;
+            
+            // Update navigation button states
+            document.getElementById('prev-episode').disabled = currentEpisode <= 1;
+            
+            // Set max episodes based on series
+            const maxEpisodes = {
+                'naruto': 220,
+                'shippuden': 500,
+                'boruto': 293
+            }[currentSeries] || 999;
+            
+            document.getElementById('next-episode').disabled = currentEpisode >= maxEpisodes;
+        }
+        
+        // Navigation functions
+        function navigateEpisode(direction) {
+            const newEpisode = currentEpisode + direction;
+            window.location.href = `player.html?series=${currentSeries}&episode=${newEpisode}`;
+        }
+        
+        function backToSeries() {
+            const seriesPages = {
+                'naruto': 'Naruto.html',
+                'shippuden': 'NarutoShippuden.html',
+                'boruto': 'Boruto.html'
+            };
+            
+            window.location.href = seriesPages[currentSeries] || 'index.html';
+        }
+        
+        // Save to watch history
+        function saveToHistory() {
+            try {
+                // Get existing history or initialize new array
+                let watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+                
+                // Create history entry
+                const historyEntry = {
+                    series: currentSeries,
+                    episode: currentEpisode,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Remove duplicates (if this episode was watched before)
+                watchHistory = watchHistory.filter(entry => 
+                    !(entry.series === currentSeries && entry.episode === currentEpisode)
+                );
+                
+                // Add new entry at the beginning
+                watchHistory.unshift(historyEntry);
+                
+                // Keep only the last 20 entries
+                if (watchHistory.length > 20) {
+                    watchHistory = watchHistory.slice(0, 20);
+                }
+                
+                // Save back to localStorage
+                localStorage.setItem('watchHistory', JSON.stringify(watchHistory));
+            } catch (error) {
+                console.error('Error saving to history:', error);
+                // Non-critical error, don't disrupt the user experience
+            }
+        }
+        
+        // UI Helper Functions
+        function showLoading(message) {
+            document.getElementById('loading-container').style.display = 'block';
+            document.getElementById('error-container').style.display = 'none';
+            document.getElementById('player-frame').style.display = 'none';
+            
+            if (message) {
+                document.getElementById('loading-message').textContent = message;
+            }
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading-container').style.display = 'none';
+        }
+        
+        function showError(message) {
+            document.getElementById('loading-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'block';
+            document.getElementById('player-frame').style.display = 'none';
+            
+            document.getElementById('error-message').textContent = message || 'An error occurred while loading the video.';
+        }
+    </script>
+</body>
+</html> 

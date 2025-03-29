@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boruto Episodes</title>
+    <!-- Favicon -->
+    <link rel="icon" href="logo.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Favicon X-Images library -->
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+    <meta name="msapplication-TileImage" content="logo.png">
+    <style>
+        body {
+            background-color: #4C1D95; /* Purple background for Boruto theme */
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: #3B0764 !important; /* Darker purple for navbar */
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .navbar-brand img {
+            height: 30px;
+            margin-right: 10px;
+            border-radius: 50%;
+            background-color: #FFA500;
+            padding: 2px;
+            border: 2px solid #3B0764;
+        }
+        
+        .page-header {
+            background-image: url('posterboruto.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 25px;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        
+        .card-title {
+            font-weight: bold;
+            color: #4C1D95;
+        }
+        
+        .card-img-container {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+            background-color: #000;
+        }
+        
+        .card-img-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background-color: #333;
+        }
+        
+        .footer {
+            background-color: #3B0764;
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        
+        /* Subscription badge */
+        .subscription-badge {
+            position: fixed;
+            top: 80px;
+            right: 10px;
+            background: linear-gradient(135deg, #4C1D95, #3B0764);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+        
+        .countdown-container {
+            margin-left: 10px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Naruto Anime</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Naruto.html">Naruto Classic (<span id="naruto-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="NarutoShippuden.html">Naruto Shippuden (<span id="shippuden-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Boruto.html">Boruto (<span id="boruto-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">History</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Subscription Badge (shown when active) -->
+    <div class="subscription-badge" id="subscription-badge" style="display: none;">
+        <i class="bi bi-stars"></i> Premium Active
+        <span class="countdown-container" id="subscription-time">23:59:59</span>
+    </div>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="page-header-content">
+            <h1 class="display-4">Boruto: Naruto Next Generations</h1>
+            <p class="lead">Watch all 293 episodes of Boruto</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row" id="episode-container">
+            <!-- Episode cards will be dynamically created -->
+        </div>
+    </div>
+
+    <!-- Episode Data and Card Generation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update subscription badge if subscription exists
+            updateSubscriptionBadge();
+            
+            // Define Google Drive links for episodes - Include full URLs for easy updating
+            const episodeLinks = {
+                // Add your episode links here - leave empty for now
+            };
+            
+            // Process the links to extract file IDs and update localStorage
+            let borutoEpisodes = JSON.parse(localStorage.getItem('borutoEpisodes') || '{}');
+            
+            // Reset borutoEpisodes to fix any potential bugs
+            borutoEpisodes = {};
+            localStorage.setItem('borutoEpisodes', JSON.stringify(borutoEpisodes));
+            console.log('Reset Boruto episodes to fix any potential bugs.');
+            
+            let updated = false;
+            
+            // Process each episode link
+            for (const [episodeNumber, link] of Object.entries(episodeLinks)) {
+                if (link) {
+                    const fileId = extractFileIdFromLink(link);
+                    if (fileId) {
+                        // Only update if the fileId is different or not present
+                        if (borutoEpisodes[episodeNumber] !== fileId) {
+                            borutoEpisodes[episodeNumber] = fileId;
+                            updated = true;
+                        }
+                    }
+                }
+            }
+            
+            // Save to localStorage if changes were made
+            if (updated) {
+                localStorage.setItem('borutoEpisodes', JSON.stringify(borutoEpisodes));
+                console.log('Updated episode data in localStorage');
+            }
+            
+            // Create cards for available episodes
+            createEpisodeCards(borutoEpisodes);
+            
+            // Update episode counts in the navigation
+            updateAllEpisodeCounts();
+        });
+        
+        // Extract file ID from Google Drive link
+        function extractFileIdFromLink(link) {
+            // Match patterns like https://drive.google.com/file/d/FILEID/view
+            const match = link.match(/\/file\/d\/([^\/]+)/);
+            if (match && match[1]) {
+                return match[1];
+            }
+            
+            // Match patterns like https://drive.google.com/open?id=FILEID
+            const idMatch = link.match(/[?&]id=([^&]+)/);
+            if (idMatch && idMatch[1]) {
+                return idMatch[1];
+            }
+            
+            return null;
+        }
+        
+        // Function to play episode
+        function playEpisode(episodeNumber) {
+            // We'll pass the series and episode number to the player page
+            window.location.href = `player.html?series=boruto&episode=${episodeNumber}`;
+        }
+        
+        // Function to create episode card
+        function createEpisodeCard(episodeNumber) {
+            const col = document.createElement('div');
+            col.className = 'col-6 col-md-3';
+            
+            col.innerHTML = `
+                <div class="card" onclick="playEpisode(${episodeNumber})">
+                    <div class="card-img-container">
+                        <div class="card-img-placeholder">
+                            <img src="posterboruto.jpg" alt="Boruto Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Episode ${episodeNumber}</h5>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+        
+        // Function to update all episode counts across the site
+        function updateAllEpisodeCounts() {
+            // Set fixed counts as requested
+            document.getElementById('naruto-count').textContent = '220';
+            document.getElementById('shippuden-count').textContent = '500';
+            document.getElementById('boruto-count').textContent = '293';
+        }
+        
+        // Generate all episode cards
+        function createEpisodeCards(episodeData) {
+            const container = document.getElementById('episode-container');
+            
+            // Clear existing cards
+            container.innerHTML = '';
+            
+            // Show all 293 episodes
+            for (let episodeNumber = 1; episodeNumber <= 293; episodeNumber++) {
+                const fileId = episodeData[episodeNumber] || '';
+                const card = createEpisodeCard(episodeNumber);
+                card.id = 'episode-' + episodeNumber; // Add ID for direct navigation
+                container.appendChild(card);
+            }
+            
+            // Update count in the page header with fixed text
+            const pageHeaderLead = document.querySelector('.page-header .lead');
+            if (pageHeaderLead) {
+                pageHeaderLead.textContent = `Watch all 293 episodes of Boruto`;
+            }
+            
+            return 293;
+        }
+        
+        // Handle direct navigation via URL hash
+        if (window.location.hash) {
+            const episodeId = window.location.hash.substring(1); // Remove the # character
+            const episodeElement = document.getElementById(episodeId);
+            
+            if (episodeElement) {
+                // Scroll to the episode
+                setTimeout(() => {
+                    episodeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Highlight the episode card
+                    const card = episodeElement.querySelector('.card');
+                    if (card) {
+                        card.style.boxShadow = '0 0 15px 5px rgba(59, 7, 100, 0.7)';
+                        card.style.transform = 'translateY(-5px)';
+                        
+                        // Remove highlight after 3 seconds
+                        setTimeout(() => {
+                            card.style.boxShadow = '';
+                            card.style.transform = '';
+                        }, 3000);
+                    }
+                }, 500);
+            }
+        }
+
+        // Update subscription badge
+        function updateSubscriptionBadge() {
+            const subscription = JSON.parse(localStorage.getItem('narutoSubscription') || 'null');
+            const badge = document.getElementById('subscription-badge');
+            
+            if (subscription && subscription.expiryDate) {
+                const now = new Date().getTime();
+                const expiryTime = new Date(subscription.expiryDate).getTime();
+                
+                if (now < expiryTime) {
+                    // Calculate time remaining
+                    const timeRemaining = expiryTime - now;
+                    const hoursRemaining = Math.floor(timeRemaining / (1000 * 60 * 60));
+                    const minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const secondsRemaining = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                    // Update badge text
+                    document.getElementById('subscription-time').textContent = 
+                        `${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`;
+                    
+                    // Show badge
+                    badge.style.display = 'flex';
+                    
+                    // Update the badge every second
+                    setTimeout(updateSubscriptionBadge, 1000);
+                } else {
+                    // Hide badge if subscription expired
+                    badge.style.display = 'none';
+                    localStorage.removeItem('narutoSubscription');
+                }
+            } else {
+                // No subscription
+                badge.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- Bootstrap JS and Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</body>
+</html> 

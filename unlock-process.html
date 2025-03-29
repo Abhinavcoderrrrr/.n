@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifying - Naruto Anime Premium</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #121212;
+            font-family: 'Arial', sans-serif;
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .unlock-container {
+            background-color: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 550px;
+            width: 100%;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FF6200, #1E3A8A, #4C1D95);
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin: 30px 0;
+            background-color: #333;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(to right, #FF6200, #FF8C00);
+        }
+        
+        .step {
+            display: none;
+            padding: 10px 0;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .timer-container {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .timer-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #FFA500;
+        }
+        
+        .timer-label {
+            font-size: 1rem;
+            color: #CCC;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #FF6200, #FF8C00);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(255, 98, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 98, 0, 0.4);
+            background: linear-gradient(to right, #FF7000, #FFA000);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .ad-container {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+        
+        .ad-label {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background-color: #333;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #AAA;
+        }
+        
+        .loading-animation {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFA500;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .checkmark {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #FFA500;
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            box-shadow: inset 0px 0px 0px #FFA500;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+            position: relative;
+            top: 5px;
+            right: 5px;
+            margin: 0 auto;
+        }
+        
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #FFA500;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+        
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 30px rgba(255, 165, 0, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="unlock-container">
+        <div class="logo">
+            <i class="bi bi-play-circle-fill"></i>
+        </div>
+        <h2 id="status-title">Processing Your Request</h2>
+        <p id="status-message">Please complete all steps to unlock 24-hour premium access.</p>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        
+        <!-- Step 1: Initial processing -->
+        <div class="step active" id="step-1">
+            <div class="loading-animation"></div>
+            <p>Verifying your request...</p>
+        </div>
+        
+        <!-- Step 2: First advertisement/offer -->
+        <div class="step" id="step-2">
+            <div class="ad-container">
+                <div class="ad-label">ADVERTISEMENT</div>
+                <h4>Complete this offer to continue</h4>
+                <p>Click the button below and stay on the page for at least 10 seconds.</p>
+                <div class="timer-container" id="ad-timer-container">
+                    <div class="timer-label">Wait</div>
+                    <div class="timer-value" id="ad-timer-value">10</div>
+                    <div class="timer-label">seconds</div>
+                </div>
+                <button class="btn btn-primary" id="ad-button" disabled>Continue (Wait 10s)</button>
+            </div>
+        </div>
+        
+        <!-- Step 3: Second advertisement/offer -->
+        <div class="step" id="step-3">
+            <div class="ad-container">
+                <div class="ad-label">FINAL STEP</div>
+                <h4>You're almost there!</h4>
+                <p>Click the button below to complete verification and unlock your premium access.</p>
+                <div id="captcha-container" style="margin: 20px 0;">
+                    <!-- Simulated CAPTCHA -->
+                    <p>Please check the box to verify you're human:</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="captcha-checkbox">
+                        <label class="form-check-label" for="captcha-checkbox">
+                            I'm not a robot
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="final-button" disabled>Unlock Premium Access</button>
+            </div>
+        </div>
+        
+        <!-- Step 4: Success -->
+        <div class="step" id="step-4">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            <h3>Congratulations!</h3>
+            <p>Your premium access has been unlocked for 24 hours.</p>
+            <p>You will be redirected to your video shortly...</p>
+        </div>
+    </div>
+    
+    <script>
+        // Get URL parameters
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+        
+        // Get parameters from URL
+        const series = getParameterByName('series'); // naruto, shippuden, or boruto
+        const episodeNumber = getParameterByName('episode');
+        const fileId = getParameterByName('fileId');
+        
+        // Progress tracking
+        let currentStep = 1;
+        const totalSteps = 4;
+        
+        // Update progress bar
+        function updateProgress(step) {
+            const progressPercentage = ((step - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-bar').setAttribute('aria-valuenow', progressPercentage);
+        }
+        
+        // Move to next step
+        function goToStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show current step
+            document.getElementById(`step-${step}`).classList.add('active');
+            
+            // Update progress
+            updateProgress(step);
+            currentStep = step;
+        }
+        
+        // Initialize ad timer
+        function initializeAdTimer() {
+            const timerValue = document.getElementById('ad-timer-value');
+            const adButton = document.getElementById('ad-button');
+            let secondsLeft = 10;
+            
+            const countdown = setInterval(() => {
+                secondsLeft--;
+                timerValue.textContent = secondsLeft;
+                adButton.textContent = `Continue (Wait ${secondsLeft}s)`;
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(countdown);
+                    adButton.disabled = false;
+                    adButton.textContent = 'Continue';
+                }
+            }, 1000);
+        }
+        
+        // Function to create a subscription
+        function createSubscription() {
+            // Calculate expiry time (24 hours from now)
+            const now = new Date();
+            const expiryDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+            
+            // Create subscription object with new format
+            const subscription = {
+                active: true,
+                createdAt: now.toISOString(),
+                expiryDate: expiryDate.toISOString()
+            };
+            
+            // Save to localStorage with new key
+            localStorage.setItem('narutoSubscription', JSON.stringify(subscription));
+            
+            return subscription;
+        }
+        
+        // Generate encrypted token for validation
+        function generateToken(series, episode, fileId) {
+            // Simple encryption - in a real system you'd use stronger encryption
+            const timestamp = new Date().getTime();
+            const data = `${series}|${episode}|${fileId}|${timestamp}`;
+            
+            // Base64 encode - this is for demo purposes only
+            return btoa(data);
+        }
+        
+        // Redirect to player with token
+        function goToPlayer() {
+            // Generate token for validation
+            const token = generateToken(series, episodeNumber, fileId);
+            
+            // Redirect to player page with all necessary parameters
+            window.location.href = `player.html?series=${series}&episode=${episodeNumber}&fileId=${fileId}&token=${token}`;
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Step 1: Initial processing (automatic)
+            setTimeout(() => {
+                goToStep(2);
+                initializeAdTimer();
+            }, 3000);
+            
+            // Step 2: Ad button click
+            document.getElementById('ad-button').addEventListener('click', function() {
+                goToStep(3);
+                
+                // Enable the final button when captcha is checked
+                document.getElementById('captcha-checkbox').addEventListener('change', function() {
+                    document.getElementById('final-button').disabled = !this.checked;
+                });
+            });
+            
+            // Step 3: Final button click
+            document.getElementById('final-button').addEventListener('click', function() {
+                goToStep(4);
+                
+                // Create subscription
+                createSubscription();
+                
+                // Redirect after a delay
+                setTimeout(() => {
+                    goToPlayer();
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html> 
