@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naruto All Episodes - Abhinav Jha</title>
+    <!-- Favicon -->
+    <link rel="icon" href="logo.png" type="image/png">
+    <!-- Favicon X-Images library -->
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+    <meta name="msapplication-TileImage" content="logo.png">
+    <!-- Linking Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Linking Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Linking Custom JavaScript -->
+    <script src="main.js"></script>
+</head>
+
+<body>
+    <header class="heading">
+        <h1>Naruto All Episodes</h1>
+    </header>
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="text-center info p-5 rounded-3 shadow-lg">
+            <p class="lead text-light">Access the complete collection of Naruto Classic (220 episodes), Naruto Shippuden (500 episodes), and Boruto (293 episodes) in one convenient location, all available for free. Immerse yourself in the epic adventures and captivating storylines of these beloved anime series, and enjoy uninterrupted viewing at your leisure.</p>
+            <button id="start-btn" onclick="getstarted();" class="btn btn-warning btn-lg">
+                Get Started
+            </button>
+            
+            <!-- Recently Watched Section -->
+            <div class="mt-5">
+                <h3 class="text-light mb-4">Recently Watched</h3>
+                <div id="history-container" class="row"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update episode counts in navigation bar
+            updateAllEpisodeCounts();
+            
+            // Setup subscription badge
+            setupSubscriptionBadge();
+            
+            // Load watch history
+            loadWatchHistory();
+        });
+        
+        // Function to update all episode counts across the site
+        function updateAllEpisodeCounts() {
+            // Set fixed counts as requested
+            document.getElementById('naruto-count').textContent = '220';
+            document.getElementById('shippuden-count').textContent = '500';
+            document.getElementById('boruto-count').textContent = '293';
+        }
+        
+        // Setup subscription badge
+        function setupSubscriptionBadge() {
+            const badge = document.getElementById('subscription-badge');
+            if (!badge) return;
+            
+            if (hasActiveSubscription()) {
+                badge.style.display = 'inline-block';
+                badge.textContent = 'Pro';
+                badge.classList.add('badge-premium');
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        // Check if user has subscription
+        function hasActiveSubscription() {
+            const subscription = localStorage.getItem('narutoSubscription');
+            if (!subscription) return false;
+            
+            try {
+                const data = JSON.parse(subscription);
+                return data && data.active && new Date(data.expiryDate) > new Date();
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        // Load watch history
+        function loadWatchHistory() {
+            // Get history from localStorage
+            const history = JSON.parse(localStorage.getItem('narutoWatchHistory') || '[]');
+            const historyContainer = document.getElementById('history-container');
+            
+            // Clear container
+            historyContainer.innerHTML = '';
+            
+            // Display message if no history
+            if (history.length === 0) {
+                historyContainer.innerHTML = '<p class="text-center text-muted">No watch history yet</p>';
+                return;
+            }
+            
+            // Create history items (limit to 5 items)
+            const recentHistory = history.slice(0, 5);
+            
+            for (const item of recentHistory) {
+                // Map full series name to URL parameter
+                let seriesParam;
+                if (item.seriesName === 'Naruto Classic') {
+                    seriesParam = 'naruto';
+                } else if (item.seriesName === 'Naruto Shippuden') {
+                    seriesParam = 'shippuden';
+                } else if (item.seriesName === 'Boruto') {
+                    seriesParam = 'boruto';
+                } else {
+                    seriesParam = item.series;
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'col-md-4 mb-4';
+                card.innerHTML = `
+                    <div class="card history-card">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.title}</h5>
+                            <p class="card-text">Last watched: ${formatDate(item.timestamp)}</p>
+                            <a href="player.html?series=${encodeURIComponent(seriesParam)}&episode=${item.episodeNumber}" class="btn btn-primary">Continue</a>
+                        </div>
+                    </div>
+                `;
+                historyContainer.appendChild(card);
+            }
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) {
+                return 'Today';
+            } else if (diffDays === 1) {
+                return 'Yesterday';
+            } else if (diffDays < 7) {
+                return `${diffDays} days ago`;
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+    </script>
+</body>
+
+</html>
