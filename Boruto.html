@@ -130,6 +130,61 @@
             margin-left: 10px;
             font-family: monospace;
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .page-header {
+                padding: 50px 0;
+                margin-bottom: 20px;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .page-header .lead {
+                font-size: 1rem;
+            }
+            
+            .card {
+                margin-bottom: 15px;
+            }
+            
+            .card-body {
+                padding: 10px;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+                margin-bottom: 0;
+            }
+            
+            .subscription-badge {
+                padding: 8px 12px;
+                top: 70px;
+                right: 5px;
+                font-size: 0.9rem;
+            }
+            
+            .countdown-container {
+                font-size: 0.9rem;
+            }
+            
+            /* Make episode cards look better on small screens */
+            .col-6 {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            
+            .row {
+                margin-left: -5px;
+                margin-right: -5px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -247,8 +302,30 @@
         
         // Function to play episode
         function playEpisode(episodeNumber) {
-            // We'll pass the series and episode number to the player page
-            window.location.href = `player.html?series=boruto&episode=${episodeNumber}`;
+            // Check if user has premium access
+            if (hasPremiumAccess()) {
+                // If user has premium, go directly to player
+                window.location.href = `player.html?series=boruto&episode=${episodeNumber}`;
+            } else {
+                // If no premium access, redirect to unlock page
+                window.location.href = `unlock.html?series=boruto&episode=${episodeNumber}`;
+            }
+        }
+        
+        // Check if user has valid premium subscription
+        function hasPremiumAccess() {
+            const subscription = JSON.parse(localStorage.getItem('narutoSubscription') || 'null');
+            
+            if (subscription && subscription.expiryDate) {
+                const now = new Date().getTime();
+                const expiryTime = new Date(subscription.expiryDate).getTime();
+                
+                // Return true if subscription is valid (current time is before expiry)
+                return now < expiryTime;
+            }
+            
+            // No subscription or invalid
+            return false;
         }
         
         // Function to create episode card

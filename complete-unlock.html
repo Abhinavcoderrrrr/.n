@@ -235,14 +235,39 @@
         // Verify tracking ID and redirect to player
         function verifyAndRedirect() {
             const trackingId = getParameterByName('id');
+            const referer = document.referrer;
             
             // Log for debugging
             logDebug("Starting verification process");
             logDebug("Received tracking ID: " + trackingId);
+            logDebug("Referer: " + referer);
             
-            // Always create subscription regardless of tracking ID
-            // This ensures users who complete the GPLinks process get access
-            logDebug("Creating subscription regardless of tracking ID");
+            // Check if the user is coming from GPLinks
+            const isFromGPLinks = referer.includes('gplinks.co') || referer.includes('gplinks.in') || 
+                                 referer.includes('gplinks.com') || getParameterByName('gp') === '1';
+            
+            if (!isFromGPLinks) {
+                logDebug("User did not come from GPLinks, redirecting back to unlock page");
+                
+                // Get the pending unlock data to redirect back to the correct unlock page
+                const pendingUnlock = JSON.parse(localStorage.getItem('pendingUnlock') || 'null');
+                if (pendingUnlock && pendingUnlock.series && pendingUnlock.episode) {
+                    setTimeout(() => {
+                        window.location.href = `unlock.html?series=${pendingUnlock.series}&episode=${pendingUnlock.episode}`;
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        window.location.href = 'unlock.html';
+                    }, 1000);
+                }
+                
+                // Show error message
+                showError('Please complete the required steps to access premium content.');
+                return;
+            }
+            
+            // Proceed with creating subscription and granting access
+            logDebug("User came from GPLinks, granting access");
             createAndGrantAccess();
         }
         
@@ -269,8 +294,8 @@
             showSuccess();
             logDebug("Showing success message");
             
-            // Redirect to player after delay
-            const redirectDelay = 3000;
+            // Redirect to player after a shorter delay
+            const redirectDelay = 1000; // Reduced from 3000ms to 1000ms
             logDebug(`Will redirect in ${redirectDelay/1000} seconds`);
             
             setTimeout(() => {
@@ -279,10 +304,10 @@
                     const token = generateToken(
                         pendingUnlock.series,
                         pendingUnlock.episode,
-                        pendingUnlock.fileId
+                        pendingUnlock.fileId || '' // Add a default empty string for fileId
                     );
                     
-                    const redirectUrl = `player.html?series=${pendingUnlock.series}&episode=${pendingUnlock.episode}&fileId=${pendingUnlock.fileId}&token=${token}`;
+                    const redirectUrl = `player.html?series=${pendingUnlock.series}&episode=${pendingUnlock.episode}${pendingUnlock.fileId ? `&fileId=${pendingUnlock.fileId}` : ''}&token=${token}`;
                     logDebug("Redirecting to: " + redirectUrl);
                     window.location.href = redirectUrl;
                 } else {
@@ -356,7 +381,7 @@
                 }
             });
             
-            // Show manual grant access button after 8 seconds
+            // Show manual grant access button faster (after 3 seconds instead of 8)
             setTimeout(function() {
                 const successVisible = document.getElementById('success-container').style.display !== 'none';
                 const errorVisible = document.getElementById('error-container').style.display !== 'none';
@@ -366,10 +391,10 @@
                     document.getElementById('manual-grant-container').style.display = 'block';
                     logDebug('Showing manual grant access button');
                 }
-            }, 8000);
+            }, 3000); // Reduced from 8000ms to 3000ms
             
-            // Verify and redirect after brief delay
-            setTimeout(verifyAndRedirect, 2000);
+            // Verify and redirect immediately
+            verifyAndRedirect();
         });
     </script>
 </body>

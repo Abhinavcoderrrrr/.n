@@ -171,6 +171,57 @@
             cursor: not-allowed;
             transform: none;
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .player-container {
+                padding: 10px;
+            }
+            
+            .episode-info {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .episode-info h2 {
+                font-size: 1.3rem;
+                margin-bottom: 0;
+            }
+            
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-btn {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                margin: 5px 3px;
+                flex-grow: 1;
+                text-align: center;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .loading-container h4 {
+                font-size: 1.1rem;
+            }
+            
+            .loading-container p {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -211,28 +262,28 @@
             <div class="loading-spinner"></div>
             <h4>Loading video...</h4>
             <p id="loading-message">Preparing your episode</p>
-        </div>
+                </div>
                 
         <!-- Error Container -->
         <div class="error-container" id="error-container">
             <h4><i class="bi bi-exclamation-triangle"></i> Error Loading Video</h4>
             <p id="error-message">An error occurred while loading the video.</p>
             <button class="btn btn-outline-light" onclick="location.reload()">Try Again</button>
-        </div>
+                </div>
                 
         <!-- Video Player -->
         <iframe id="player-frame" style="display: none;" allowfullscreen></iframe>
         
         <!-- Episode Navigation -->
-        <div class="d-flex justify-content-between mt-3">
+        <div class="d-flex justify-content-between mt-3 nav-buttons">
             <button id="prev-episode" class="nav-btn" onclick="navigateEpisode(-1)">
-                <i class="bi bi-skip-backward-fill"></i> Previous Episode
+                <i class="bi bi-skip-backward-fill"></i> Previous
             </button>
             <button id="back-to-list" class="nav-btn" onclick="backToSeries()">
-                <i class="bi bi-grid-fill"></i> Back to Episodes
+                <i class="bi bi-grid-fill"></i> Back
             </button>
             <button id="next-episode" class="nav-btn" onclick="navigateEpisode(1)">
-                Next Episode <i class="bi bi-skip-forward-fill"></i>
+                Next <i class="bi bi-skip-forward-fill"></i>
             </button>
         </div>
     </div>
@@ -260,6 +311,13 @@
                 return;
             }
             
+            // Check if user has premium access before playing video
+            if (!hasPremiumAccess()) {
+                // Redirect to unlock page with return URL
+                redirectToUnlock();
+                return;
+            }
+            
             // Apply theme based on series
             applyTheme();
             
@@ -272,6 +330,29 @@
             // Save to watch history
             saveToHistory();
         });
+        
+        // Check if user has valid premium subscription
+        function hasPremiumAccess() {
+            const subscription = JSON.parse(localStorage.getItem('narutoSubscription') || 'null');
+            
+            if (subscription && subscription.expiryDate) {
+                const now = new Date().getTime();
+                const expiryTime = new Date(subscription.expiryDate).getTime();
+                
+                // Return true if subscription is valid (current time is before expiry)
+                return now < expiryTime;
+            }
+            
+            // No subscription or invalid
+            return false;
+        }
+        
+        // Redirect to unlock page with return parameters
+        function redirectToUnlock() {
+            // Pass the current series and episode as parameters
+            const returnUrl = `series=${currentSeries}&episode=${currentEpisode}`;
+            window.location.href = `unlock.html?${returnUrl}`;
+        }
         
         // Apply theme based on the series
         function applyTheme() {
@@ -434,9 +515,6 @@
             const seriesName = seriesNames[currentSeries] || currentSeries;
             document.getElementById('episode-title').textContent = `${seriesName} - Episode ${currentEpisode}`;
             
-            // Update navigation button states
-            document.getElementById('prev-episode').disabled = currentEpisode <= 1;
-            
             // Set max episodes based on series
             const maxEpisodes = {
                 'naruto': 220,
@@ -444,7 +522,23 @@
                 'boruto': 293
             }[currentSeries] || 999;
             
-            document.getElementById('next-episode').disabled = currentEpisode >= maxEpisodes;
+            // Update navigation button states - hide buttons instead of just disabling them
+            const prevButton = document.getElementById('prev-episode');
+            const nextButton = document.getElementById('next-episode');
+            
+            // Handle previous button for first episode
+            if (currentEpisode <= 1) {
+                prevButton.style.display = 'none';
+            } else {
+                prevButton.style.display = 'block';
+            }
+            
+            // Handle next button for last episode
+            if (currentEpisode >= maxEpisodes) {
+                nextButton.style.display = 'none';
+            } else {
+                nextButton.style.display = 'block';
+            }
         }
         
         // Navigation functions
@@ -467,18 +561,28 @@
         function saveToHistory() {
             try {
                 // Get existing history or initialize new array
-                let watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+                let watchHistory = JSON.parse(localStorage.getItem('narutoWatchHistory') || '[]');
+                
+                // Get series name for display
+                const seriesNames = {
+                    'naruto': 'Naruto Classic',
+                    'shippuden': 'Naruto Shippuden',
+                    'boruto': 'Boruto: Naruto Next Generations'
+                };
+                const seriesName = seriesNames[currentSeries] || currentSeries;
                 
                 // Create history entry
                 const historyEntry = {
+                    id: Date.now().toString(), // Unique ID for the entry
                     series: currentSeries,
-                    episode: currentEpisode,
+                    episodeNumber: currentEpisode,
+                    title: `${seriesName} - Episode ${currentEpisode}`,
                     timestamp: new Date().toISOString()
                 };
                 
                 // Remove duplicates (if this episode was watched before)
                 watchHistory = watchHistory.filter(entry => 
-                    !(entry.series === currentSeries && entry.episode === currentEpisode)
+                    !(entry.series === currentSeries && entry.episodeNumber === currentEpisode)
                 );
                 
                 // Add new entry at the beginning
@@ -490,7 +594,7 @@
                 }
                 
                 // Save back to localStorage
-                localStorage.setItem('watchHistory', JSON.stringify(watchHistory));
+                localStorage.setItem('narutoWatchHistory', JSON.stringify(watchHistory));
             } catch (error) {
                 console.error('Error saving to history:', error);
                 // Non-critical error, don't disrupt the user experience
