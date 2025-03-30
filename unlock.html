@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    
     <style>
         body {
             background-color: #121212;
@@ -102,8 +101,6 @@
             margin: 20px 0;
             box-shadow: 0 5px 15px rgba(255, 98, 0, 0.3);
             transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-            max-width: 320px;
         }
         
         .cta-button:hover {
@@ -211,99 +208,6 @@
             display: inline-flex;
             align-items: center;
         }
-        
-        /* Spin animation for loading indicator */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .spin {
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
-        
-        /* Mobile optimizations */
-        @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-            
-            .page-header {
-                padding: 20px 0;
-                margin-bottom: 20px;
-            }
-            
-            .page-header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .page-header .lead {
-                font-size: 1rem;
-            }
-            
-            .unlock-container {
-                padding: 20px 15px;
-                margin-bottom: 20px;
-            }
-            
-            .unlock-container h2 {
-                font-size: 1.5rem;
-            }
-            
-            .episode-preview {
-                margin-bottom: 20px;
-            }
-            
-            .episode-image {
-                height: 180px;
-            }
-            
-            .episode-info {
-                padding: 15px;
-            }
-            
-            .episode-info h3 {
-                font-size: 1.2rem;
-                margin-bottom: 5px;
-            }
-            
-            .feature-icon {
-                width: 35px;
-                height: 35px;
-                margin-right: 10px;
-            }
-            
-            .feature-item {
-                margin-bottom: 12px;
-            }
-            
-            .feature-item strong {
-                font-size: 0.95rem;
-            }
-            
-            .feature-item p {
-                font-size: 0.85rem;
-                margin-bottom: 0;
-            }
-            
-            .cta-button {
-                padding: 12px 20px;
-                font-size: 16px;
-            width: 100%;
-            }
-            
-            .blur-overlay::before {
-                font-size: 1.2rem;
-            }
-            
-            .subscription-badge {
-                padding: 8px 12px;
-                top: 70px;
-                right: 5px;
-                font-size: 0.9rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -340,7 +244,7 @@
             <span id="subscription-time">23:59:59</span>
         </div>
     </div>
-
+    
     <!-- Page Header -->
     <div class="page-header">
         <div class="container">
@@ -397,18 +301,11 @@
                         <i class="bi bi-unlock"></i> Unlock Premium Access By Ads
                     </button>
                     
-                    <p style="color: white;" class="text-muted">By clicking the button, you'll be redirected to complete a quick offer</p>
-                    
-                    <div id="gplink-fallback" style="display: none; margin-top: 15px; padding: 10px; border-radius: 8px; background-color: rgba(255, 165, 0, 0.1); border: 1px dashed #ffa500;">
-                        <p class="text-warning mb-2">If automatic redirection doesn't work, use this button:</p>
-                        <a href="#" id="direct-gplink" class="btn btn-warning">
-                            <i class="bi bi-link-45deg"></i> Open GPLinks Manually
-                        </a>
-                    </div>
+                    <p class="text-muted">By clicking the button, you'll be redirected to complete a quick offer</p>
                     
                     <div class="mt-3">
-                        <p class="mb-1" style=": #FFA500;"><i class="bi bi-heart-fill"></i> Support the Developer</p>
-                        <p style = "color : white;" class="text-muted small">Your participation helps maintain this service and add more episodes. Thank you!</p>
+                        <p class="mb-1" style="color: #FFA500;"><i class="bi bi-heart-fill"></i> Support the Developer</p>
+                        <p class="text-muted small">Your participation helps maintain this service and add more episodes. Thank you!</p>
                     </div>
                     
                     <div class="subscription-details">
@@ -574,27 +471,15 @@
             }
         }
         
-        // Save return URL parameters
-        let returnSeries = '';
-        let returnEpisode = 1;
-
-        // On document ready
+        // When the document is ready
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize the page
             initializeEpisodePreview();
             updateSubscriptionBadge();
             
-            // Check if the URL has the 'completed' parameter
-            const completed = getParameterByName('completed');
-            
-            if (completed === 'true') {
-                // User has completed the GPLink process, create subscription
-                createSubscription();
-            } else {
-                // Check if user already has a subscription
-                if (checkSubscription()) {
-                    return; // Redirect handled by checkSubscription
-                }
+            // Check if user already has a subscription
+            if (checkSubscription()) {
+                return; // Redirect handled by checkSubscription
             }
             
             // Setup check subscription button
@@ -611,188 +496,86 @@
             const unlockButton = document.getElementById('unlock-button');
             unlockButton.disabled = false;
             
-            // Get return parameters from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            returnSeries = urlParams.get('series') || '';
-            returnEpisode = parseInt(urlParams.get('episode')) || 1;
-            
-            // Update the unlock button to include return parameters
-            if (unlockButton) {
-                unlockButton.addEventListener('click', function() {
-                    // Save the pending unlock information in localStorage
-                    const pendingUnlock = {
-                        series: returnSeries,
-                        episode: returnEpisode
-                    };
-                    localStorage.setItem('pendingUnlock', JSON.stringify(pendingUnlock));
-                    
-                    // Update the button to show loading
-                    unlockButton.disabled = true;
-                    unlockButton.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Processing...';
-                    
-                    // Show the fallback/manual button while processing
-                    document.getElementById('gplink-fallback').style.display = 'block';
-                    
-                    // Create and submit a form to generate GPLink without CORS issues
-                    createAndSubmitGPLinkForm(returnSeries, returnEpisode, false);
-                });
-            }
-            
-            // Setup manual direct GPLink link
-            const directGPLink = document.getElementById('direct-gplink');
-            if (directGPLink) {
-                directGPLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Save the same pending unlock information
-                    const pendingUnlock = {
-                        series: returnSeries,
-                        episode: returnEpisode
-                    };
-                    localStorage.setItem('pendingUnlock', JSON.stringify(pendingUnlock));
-                    
-                    // Create and submit a form to generate GPLink without CORS issues
-                    createAndSubmitGPLinkForm(returnSeries, returnEpisode, true);
-                });
-            }
-            
-            // Setup return details if provided
-            if (returnSeries && returnEpisode) {
-                setupReturnDetails();
-            }
-        });
-
-        // Setup return details in the UI
-        function setupReturnDetails() {
-            const seriesNames = {
-                'naruto': 'Naruto Classic',
-                'shippuden': 'Naruto Shippuden',
-                'boruto': 'Boruto: Naruto Next Generations'
-            };
-            
-            const seriesName = seriesNames[returnSeries] || returnSeries;
-            
-            // Update episode info display
-            const episodeTitle = document.getElementById('episode-title');
-            if (episodeTitle) {
-                episodeTitle.textContent = `${seriesName} - Episode ${returnEpisode}`;
-            }
-            
-            // Update theme class based on the series
-            const episodePreview = document.querySelector('.episode-preview');
-            if (episodePreview) {
-                // Remove existing theme classes
-                episodePreview.classList.remove('naruto-theme', 'shippuden-theme', 'boruto-theme');
+            // Handle unlock button click
+            unlockButton.addEventListener('click', function() {
+                // Create a unique ID for tracking - use simpler format
+                const trackingId = Math.floor(Math.random() * 1000000).toString();
                 
-                // Add appropriate theme class
-                if (returnSeries === 'naruto') {
-                    episodePreview.classList.add('naruto-theme');
-                    episodePreview.querySelector('img').src = 'posternarutoclassic.jpg';
-                } else if (returnSeries === 'shippuden') {
-                    episodePreview.classList.add('shippuden-theme');
-                    episodePreview.querySelector('img').src = 'postershippuden.jpg';
-                } else if (returnSeries === 'boruto') {
-                    episodePreview.classList.add('boruto-theme');
-                    episodePreview.querySelector('img').src = 'posterboruto.jpg';
-                }
-            }
-        }
-
-        // Function to create a 24-hour subscription
-        function createSubscription() {
-            // Create expiry date (24 hours from now)
-            const expiryDate = new Date();
-            expiryDate.setTime(expiryDate.getTime() + (24 * 60 * 60 * 1000));
-            
-            // Create subscription object
-            const subscription = {
-                active: true,
-                expiryDate: expiryDate.toISOString()
-            };
-            
-            // Save to localStorage
-            localStorage.setItem('narutoSubscription', JSON.stringify(subscription));
-            
-            // Get pending unlock info
-            const pendingUnlock = JSON.parse(localStorage.getItem('pendingUnlock') || 'null');
-            
-            if (pendingUnlock && pendingUnlock.series && pendingUnlock.episode) {
-                // Go to the player with the pending episode
-                const token = generateToken(pendingUnlock.series, pendingUnlock.episode, '');
-                window.location.href = `player.html?series=${pendingUnlock.series}&episode=${pendingUnlock.episode}&token=${token}`;
-            } else {
-                // Fallback to index page if no pending episode
-                window.location.href = 'index.html';
-            }
-        }
-
-        // Function to create and submit a form to the GPLink API
-        function createAndSubmitGPLinkForm(series, episode, isManual) {
-            // Generate a unique timestamp for alias
-            const timestamp = Math.floor(Date.now()/1000);
-            
-            // Build the correct API URL format as specified
-            const apiKey = 'b52648892a578ea3d98f6c38a431e1a264411bba';
-            const baseUrl = window.location.href.split('?')[0];
-            const destinationUrl = `${baseUrl}?series=${series}&episode=${episode}&completed=true`;
-            const alias = `${series}-${episode}-${isManual ? 'manual-' : ''}${timestamp}`;
-            
-            // Show a loading message
-            const loadingMsg = document.createElement('div');
-            loadingMsg.id = 'gplink-loading';
-            loadingMsg.style.position = 'fixed';
-            loadingMsg.style.top = '50%';
-            loadingMsg.style.left = '50%';
-            loadingMsg.style.transform = 'translate(-50%, -50%)';
-            loadingMsg.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-            loadingMsg.style.padding = '20px';
-            loadingMsg.style.borderRadius = '10px';
-            loadingMsg.style.color = 'white';
-            loadingMsg.style.zIndex = '9999';
-            loadingMsg.innerHTML = `
-                <div class="text-center">
-                    <div class="spinner-border text-warning mb-3" role="status"></div>
-                    <p>Generating GPLink...</p>
-                </div>
-            `;
-            document.body.appendChild(loadingMsg);
-            
-            // Make a fetch request to our own proxy or direct API call
-            const apiUrl = `https://gplinks.in/api?api=${apiKey}&url=${encodeURIComponent(destinationUrl)}&alias=${alias}`;
-            
-            // Use fetch with mode 'no-cors' to avoid CORS issues
-            fetch(apiUrl, { method: 'GET', mode: 'no-cors' })
-                .then(() => {
-                    // Since we can't access the response content with no-cors,
-                    // we'll just directly use the shortened URL format which is typically:
-                    const shortUrl = `https://gplinks.in/${alias}`;
-                    console.log('Generated GPLink URL:', shortUrl);
-                    
-                    // Remove loading message
-                    if (document.getElementById('gplink-loading')) {
-                        document.body.removeChild(loadingMsg);
-                    }
-                    
-                    // Redirect to the shortened URL
-                    window.location.href = shortUrl;
-                })
-                .catch(error => {
-                    console.error('Error creating GPLink URL:', error);
-                    
-                    // Remove loading message
-                    if (document.getElementById('gplink-loading')) {
-                        document.body.removeChild(loadingMsg);
-                    }
-                    
-                    // Show error and reset button
-                    alert('Error connecting to GPLinks. Please try again later.');
-                    const unlockButton = document.getElementById('unlock-button');
-                    if (unlockButton) {
+                // Store the details in localStorage to retrieve after completing GPLINK process
+                localStorage.setItem('pendingUnlock', JSON.stringify({
+                    series: series,
+                    episode: episodeNumber,
+                    fileId: fileId,
+                    trackingId: trackingId,
+                    timestamp: new Date().getTime()
+                }));
+                
+                // Generate return URL with tracking ID - ensure this is a complete URL
+                const fullUrl = window.location.protocol + '//' + window.location.host;
+                const returnUrl = `${fullUrl}/complete-unlock.html?id=${trackingId}`;
+                console.log("Return URL:", returnUrl);
+                
+                // Encode the return URL for the API
+                const encodedReturnUrl = encodeURIComponent(returnUrl);
+                
+                // Format the GPLinks API URL with the developer token
+                const apiToken = 'b52648892a578ea3d98f6c38a431e1a264411bba';
+                const uniqueAlias = 'naruto_' + Math.floor(Math.random() * 1000000); // Generate a random unique alias
+                const gpLinksApiUrl = `https://api.gplinks.com/api?api=${apiToken}&url=${encodedReturnUrl}&alias=${uniqueAlias}`;
+                
+                // Show loading state
+                unlockButton.disabled = true;
+                unlockButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+                
+                // Make a request to the GPLinks API
+                fetch(gpLinksApiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('GPLinks API response:', data);
+                        if (data.status === 'error') {
+                            // Handle error
+                            console.error('GPLinks API error:', data.message);
+                            
+                            // Try with a different alias if the current one exists
+                            if (data.message && data.message[0] === "Alias already exists.") {
+                                console.log('Trying with a different alias...');
+                                // Create a new unique alias with timestamp
+                                const newUniqueAlias = 'naruto_' + Date.now();
+                                const newGpLinksApiUrl = `https://api.gplinks.com/api?api=${apiToken}&url=${encodedReturnUrl}&alias=${newUniqueAlias}`;
+                                
+                                // Retry the request
+                                return fetch(newGpLinksApiUrl).then(response => response.json());
+                            } else {
+                                // Display error message for other types of errors
+                                alert('Error creating link: ' + (data.message instanceof Array ? data.message.join(', ') : data.message));
+                                unlockButton.disabled = false;
+                                unlockButton.innerHTML = '<i class="bi bi-unlock"></i> Unlock Premium Access';
+                                throw new Error('GPLinks API error');
+                            }
+                        } else {
+                            return data;
+                        }
+                    })
+                    .then(data => {
+                        if (data.shortenedUrl) {
+                            // Redirect to the shortened URL
+                            window.location.href = data.shortenedUrl;
+                        } else {
+                            // Handle case where no URL was returned
+                            console.error('No shortened URL returned from GPLinks API');
+                            alert('Failed to create GPLinks redirect. Please try again.');
+                            unlockButton.disabled = false;
+                            unlockButton.innerHTML = '<i class="bi bi-unlock"></i> Unlock Premium Access';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error calling GPLinks API:', error);
+                        alert('An error occurred. Please try again.');
                         unlockButton.disabled = false;
-                        unlockButton.innerHTML = '<i class="bi bi-unlock"></i> Unlock Premium Access By Ads';
-                    }
-                });
-        }
+                        unlockButton.innerHTML = '<i class="bi bi-unlock"></i> Unlock Premium Access';
+                    });
+            });
+        });
     </script>
     
     <!-- Bootstrap JS -->
