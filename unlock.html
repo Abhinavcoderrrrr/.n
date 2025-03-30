@@ -373,7 +373,7 @@
                             </div>
                             <div>
                                 <strong>Ad-Free Experience</strong>
-                                <p class="text-muted mb-0">Watch all episodes without interruptions</p>
+                                <p class="unlock-info mb-0">Watch all episodes without interruptions</p>
                             </div>
                         </div>
                         <div class="feature-item">
@@ -382,7 +382,7 @@
                             </div>
                             <div>
                                 <strong>24-Hour Access</strong>
-                                <p class="text-muted mb-0">Unlimited viewing for a full day</p>
+                                <p class="unlock-info mb-0">Unlimited viewing for a full day</p>
                             </div>
                         </div>
                         <div class="feature-item">
@@ -391,7 +391,7 @@
                             </div>
                             <div>
                                 <strong>All Episodes Included</strong>
-                                <p class="text-muted mb-0">Naruto, Shippuden, and Boruto series</p>
+                                <p class="unlock-info mb-0">Naruto, Shippuden, and Boruto series</p>
                             </div>
                         </div>
                     </div>
@@ -400,17 +400,18 @@
                     <button id="unlock-button" class="cta-button">
                         <i class="bi bi-unlock"></i> Unlock Premium Access By Ads
                     </button>
-                    
+                    <p class="unlock-info">By clicking the button, you'll be redirected to complete a quick offer</p>
                     
                     <div id="shrinkforearn-fallback" style="display: none; margin-top: 15px; padding: 10px; border-radius: 8px; background-color: rgba(255, 165, 0, 0.1); border: 1px dashed #ffa500;">
                         <p class="text-warning mb-2">If automatic redirection doesn't work, use this button:</p>
                         <a href="#" id="direct-shrinkforearn" class="btn btn-warning">
-                            <i class="bi bi-link-45deg"></i> Open ShrinkForEarn Manually
+                            <i class="bi bi-link-45deg"></i> Open GPLinks Manually
                         </a>
                     </div>
                     
                     <div class="mt-3">
                         <p class="mb-1" style="color: #FFA500;"><i class="bi bi-heart-fill"></i> Support the Developer</p>
+                        <p class="unlock-info small">Your participation helps maintain this service and add more episodes. Thank you!</p>
                     </div>
                     
                     <div class="subscription-details">
@@ -532,7 +533,7 @@
                 </div>
                 <div class="episode-info">
                     <h3>${seriesName} - Episode ${episodeNumber}</h3>
-                    <p class="text-muted">Unlock premium access to watch this episode</p>
+                    <p class="unlock-info">Unlock premium access to watch this episode</p>
                 </div>
             `;
             
@@ -590,7 +591,7 @@
             const completed = getParameterByName('completed');
             
             if (completed === 'true') {
-                // User has completed the ShrinkForEarn process, create subscription
+                // User has completed the GPLinks process, create subscription
                 createSubscription();
             } else {
                 // Check if user already has a subscription
@@ -635,12 +636,12 @@
                     // Show the fallback/manual button while processing
                     document.getElementById('shrinkforearn-fallback').style.display = 'block';
                     
-                    // Create and submit a form to generate ShrinkForEarn link without CORS issues
-                    createAndSubmitShrinkForEarnForm(returnSeries, returnEpisode, false);
+                    // Create and submit a form to generate GPLinks link without CORS issues
+                    createAndSubmitGPLinksForm(returnSeries, returnEpisode, false);
                 });
             }
             
-            // Setup manual direct ShrinkForEarn link
+            // Setup manual direct GPLinks link
             const directShrinkForEarn = document.getElementById('direct-shrinkforearn');
             if (directShrinkForEarn) {
                 directShrinkForEarn.addEventListener('click', function(e) {
@@ -653,8 +654,8 @@
                     };
                     localStorage.setItem('pendingUnlock', JSON.stringify(pendingUnlock));
                     
-                    // Create and submit a form to generate ShrinkForEarn link without CORS issues
-                    createAndSubmitShrinkForEarnForm(returnSeries, returnEpisode, true);
+                    // Create and submit a form to generate GPLinks link without CORS issues
+                    createAndSubmitGPLinksForm(returnSeries, returnEpisode, true);
                 });
             }
             
@@ -728,20 +729,20 @@
             }
         }
 
-        // Function to create and submit a form to the ShrinkForEarn API
-        function createAndSubmitShrinkForEarnForm(series, episode, isManual) {
+        // Function to create and submit a form to the GPLinks API
+        function createAndSubmitGPLinksForm(series, episode, isManual) {
             // Generate a unique timestamp for alias
             const timestamp = Math.floor(Date.now()/1000);
             
             // Build the correct API URL format as specified
-            const apiKey = '032af0746d77bf37dffe20bf336304b26aa66440';
+            const apiKey = 'b52648892a578ea3d98f6c38a431e1a264411bba';
             const baseUrl = window.location.href.split('?')[0];
             const destinationUrl = `${baseUrl}?series=${series}&episode=${episode}&completed=true`;
             const alias = `${series}-${episode}-${isManual ? 'manual-' : ''}${timestamp}`;
             
             // Show a loading message
             const loadingMsg = document.createElement('div');
-            loadingMsg.id = 'shrinkforearn-loading';
+            loadingMsg.id = 'gplinks-loading';
             loadingMsg.style.position = 'fixed';
             loadingMsg.style.top = '50%';
             loadingMsg.style.left = '50%';
@@ -754,24 +755,24 @@
             loadingMsg.innerHTML = `
                 <div class="text-center">
                     <div class="spinner-border text-warning mb-3" role="status"></div>
-                    <p>Generating ShrinkForEarn Link...</p>
+                    <p>Generating GPLinks Link...</p>
                 </div>
             `;
             document.body.appendChild(loadingMsg);
             
-            // Make a fetch request to our own proxy or direct API call
-            const apiUrl = `https://shrinkforearn.in/api?api=${apiKey}&url=${encodeURIComponent(destinationUrl)}&alias=${alias}`;
+            // Make a fetch request to the GPLinks API
+            const apiUrl = `https://api.gplinks.com/api?api=${apiKey}&url=${encodeURIComponent(destinationUrl)}&alias=${alias}`;
             
             // Use fetch with mode 'no-cors' to avoid CORS issues
             fetch(apiUrl, { method: 'GET', mode: 'no-cors' })
                 .then(() => {
                     // Since we can't access the response content with no-cors,
-                    // we'll just directly use the shortened URL format which is typically:
-                    const shortUrl = `https://shrinkforearn.in/${alias}`;
-                    console.log('Generated ShrinkForEarn URL:', shortUrl);
+                    // we'll just directly use the shortened URL format:
+                    const shortUrl = `https://gplinks.com/${alias}`;
+                    console.log('Generated GPLinks URL:', shortUrl);
                     
                     // Remove loading message
-                    if (document.getElementById('shrinkforearn-loading')) {
+                    if (document.getElementById('gplinks-loading')) {
                         document.body.removeChild(loadingMsg);
                     }
                     
@@ -779,15 +780,15 @@
                     window.location.href = shortUrl;
                 })
                 .catch(error => {
-                    console.error('Error creating ShrinkForEarn URL:', error);
+                    console.error('Error creating GPLinks URL:', error);
                     
                     // Remove loading message
-                    if (document.getElementById('shrinkforearn-loading')) {
+                    if (document.getElementById('gplinks-loading')) {
                         document.body.removeChild(loadingMsg);
                     }
                     
                     // Show error and reset button
-                    alert('Error connecting to ShrinkForEarn. Please try again later.');
+                    alert('Error connecting to GPLinks. Please try again later.');
                     const unlockButton = document.getElementById('unlock-button');
                     if (unlockButton) {
                         unlockButton.disabled = false;
