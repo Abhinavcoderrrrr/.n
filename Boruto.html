@@ -551,12 +551,27 @@
             // Process each episode link
             for (const [episodeNumber, link] of Object.entries(episodeLinks)) {
                 if (link) {
-                    const fileId = extractFileIdFromLink(link);
-                    if (fileId) {
-                        // Only update if the fileId is different or not present
-                        if (borutoEpisodes[episodeNumber] !== fileId) {
-                            borutoEpisodes[episodeNumber] = fileId;
+                    if (link.includes('vidstreaming.xyz') || link.includes('://') && !link.includes('drive.google.com')) {
+                        // For external video hosts like vidstreaming.xyz, store the full URL
+                        localStorage.setItem(`borutoEpisode_${episodeNumber}_fullUrl`, link);
+                        
+                        // Also store a placeholder file ID to indicate this episode has a link
+                        if (borutoEpisodes[episodeNumber] !== 'external') {
+                            borutoEpisodes[episodeNumber] = 'external';
                             updated = true;
+                        }
+                    } else {
+                        // For Google Drive links, extract and store just the file ID
+                        const fileId = extractFileIdFromLink(link);
+                        if (fileId) {
+                            // Only update if the fileId is different or not present
+                            if (borutoEpisodes[episodeNumber] !== fileId) {
+                                borutoEpisodes[episodeNumber] = fileId;
+                                updated = true;
+                            }
+                            
+                            // Remove any stored full URL for this episode since we're using Google Drive
+                            localStorage.removeItem(`borutoEpisode_${episodeNumber}_fullUrl`);
                         }
                     }
                 }

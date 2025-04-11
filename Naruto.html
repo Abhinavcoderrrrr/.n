@@ -20,6 +20,7 @@
             /* Orange background for Naruto theme */
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
+            overflow: scroll;
         }
         
         .navbar {
@@ -319,7 +320,7 @@
 
             // Define Google Drive links for episodes - Include full URLs for easy updating
             const episodeLinks = {
-                1: "https://drive.google.com/file/d/1P-ol8Xmr7wH3V7AWrGUKPjuqQuWktqdz/view?usp=sharing",
+                1: "https://vidstreaming.xyz/v/V2RG6YD4QbI9/",
                 2: "https://drive.google.com/file/d/1pRd8-zvUoO4q7DjfG4rPFWy3MBgkjTgy/view?usp=sharing",
                 3: "https://drive.google.com/file/d/1YO2u9PiXaugCdMHK-LneZs9MD9JRAHOR/view?usp=sharing",
                 4: "https://drive.google.com/file/d/1QDdhEz8p0EX6MFF_DjIup3QBf5169hAY/view?usp=sharing",
@@ -548,12 +549,27 @@
             // Process each episode link
             for (const [episodeNumber, link] of Object.entries(episodeLinks)) {
                 if (link) {
-                    const fileId = extractFileIdFromLink(link);
-                    if (fileId) {
-                        // Only update if the fileId is different or not present
-                        if (narutoEpisodes[episodeNumber] !== fileId) {
-                            narutoEpisodes[episodeNumber] = fileId;
+                    if (link.includes('vidstreaming.xyz') || link.includes('://') && !link.includes('drive.google.com')) {
+                        // For external video hosts like vidstreaming.xyz, store the full URL
+                        localStorage.setItem(`narutoEpisode_${episodeNumber}_fullUrl`, link);
+                        
+                        // Also store a placeholder file ID to indicate this episode has a link
+                        if (narutoEpisodes[episodeNumber] !== 'external') {
+                            narutoEpisodes[episodeNumber] = 'external';
                             updated = true;
+                        }
+                    } else {
+                        // For Google Drive links, extract and store just the file ID
+                        const fileId = extractFileIdFromLink(link);
+                        if (fileId) {
+                            // Only update if the fileId is different or not present
+                            if (narutoEpisodes[episodeNumber] !== fileId) {
+                                narutoEpisodes[episodeNumber] = fileId;
+                                updated = true;
+                            }
+                            
+                            // Remove any stored full URL for this episode since we're using Google Drive
+                            localStorage.removeItem(`narutoEpisode_${episodeNumber}_fullUrl`);
                         }
                     }
                 }

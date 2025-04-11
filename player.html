@@ -412,22 +412,30 @@
                     throw new Error('Unknown series');
                 }
                 
-                // Get the file ID for the current episode
+                // Get the link for the current episode
                 const link = episodeLinks[currentEpisode];
                 
                 if (!link) {
                     throw new Error('Episode not available');
                 }
                 
-                // Extract file ID from Google Drive link
-                const fileId = extractFileIdFromLink(link);
+                let embedUrl;
                 
-                if (!fileId) {
-                    throw new Error('Invalid video link');
+                // Check if this is a vidstreaming.xyz link
+                if (link.includes('vidstreaming.xyz')) {
+                    // Direct embedding for vidstreaming.xyz
+                    embedUrl = link;
+                } else {
+                    // Handle Google Drive links
+                    const fileId = extractFileIdFromLink(link);
+                    
+                    if (!fileId) {
+                        throw new Error('Invalid video link');
+                    }
+                    
+                    // Set up the Google Drive embed URL
+                    embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
                 }
-                
-                // Set up the Google Drive embed URL
-                const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
                 
                 // Set the iframe source to the embed URL
                 const playerFrame = document.getElementById('player-frame');
@@ -470,38 +478,66 @@
         
         // Functions to get episode links for each series
         function getNarutoEpisodeLinks() {
-            return {
-                1: "https://drive.google.com/file/d/1P-ol8Xmr7wH3V7AWrGUKPjuqQuWktqdz/view?usp=sharing",
-                2: "https://drive.google.com/file/d/1pRd8-zvUoO4q7DjfG4rPFWy3MBgkjTgy/view?usp=sharing",
-                3: "https://drive.google.com/file/d/1YO2u9PiXaugCdMHK-LneZs9MD9JRAHOR/view?usp=sharing",
-                4: "https://drive.google.com/file/d/1QDdhEz8p0EX6MFF_DjIup3QBf5169hAY/view?usp=sharing",
-                5: "https://drive.google.com/file/d/1PeHszLrHpyNL43a1SnmMUIhasVq-PuAO/view?usp=sharing",
-                6: "https://drive.google.com/file/d/1aSUi1hy5jDtObU35fFTvIo9GX1Ny1lgU/view?usp=sharing",
-                7: "https://drive.google.com/file/d/1UIxj4uYYmXdOuh4mVMvLXqZwhMzcOM6h/view?usp=sharing",
-                8: "https://drive.google.com/file/d/1ObZno2NxTqZj8_o6lEnvdNDlMDXNqG-M/view?usp=sharing",
-                9: "https://drive.google.com/file/d/1OdNts24NfNwutvB6wFqDpYYiyJGOt-3k/view?usp=sharing",
-                10: "https://drive.google.com/file/d/1OhXTYTopPcUnupAp32rRIKQWnUvy4VcU/view?usp=sharing",
-                11: "https://drive.google.com/file/d/1P0C6dZMbb7nogNg1z08Vioup8BjCIrcp/view?usp=sharing",
-                12: "https://drive.google.com/file/d/1Ol8o0JcPtl23Z5HCwDPFrom7YHZUBF90/view?usp=sharing",
-                13: "https://drive.google.com/file/d/1P1epmQtlZT4yIs3GMo6lwVhh2b4IKmyF/view?usp=sharing",
-                14: "https://drive.google.com/file/d/1PA1N5KAf4HcOLadOsTTDe34Vykth316T/view?usp=sharing",
-                15: "https://drive.google.com/file/d/1PAL8yuUXwuazjr2EH40cRYZVmeEuGsPO/view?usp=sharing",
-                16: "https://drive.google.com/file/d/1Ohy0HNWSOn_G89SymkW7hMLI4Re-pZ2A/view?usp=sharing",
-                17: "https://drive.google.com/file/d/1PDLtaiw9a9Zmh5bSbUY0Ye1OtdueBxmo/view?usp=sharing"
-                
-            };
+            // Get episode links from localStorage (these are stored when Naruto.html is loaded)
+            const episodesData = JSON.parse(localStorage.getItem('narutoEpisodes') || '{}');
+            const episodeLinks = {};
+            
+            // Create a map of episode numbers to their full links
+            for (const [episodeNumber, fileId] of Object.entries(episodesData)) {
+                if (fileId) {
+                    // Check if this is a complete URL (for vidstreaming.xyz or other external services)
+                    if (localStorage.getItem(`narutoEpisode_${episodeNumber}_fullUrl`)) {
+                        episodeLinks[episodeNumber] = localStorage.getItem(`narutoEpisode_${episodeNumber}_fullUrl`);
+                    } else {
+                        // Assume it's a Google Drive file ID
+                        episodeLinks[episodeNumber] = `https://drive.google.com/file/d/${fileId}/view`;
+                    }
+                }
+            }
+            
+            return episodeLinks;
         }
         
         function getShippudenEpisodeLinks() {
-            return {
-                // Add Shippuden episodes as they become available
-            };
+            // Get episode links from localStorage (these are stored when NarutoShippuden.html is loaded)
+            const episodesData = JSON.parse(localStorage.getItem('shippudenEpisodes') || '{}');
+            const episodeLinks = {};
+            
+            // Create a map of episode numbers to their full links
+            for (const [episodeNumber, fileId] of Object.entries(episodesData)) {
+                if (fileId) {
+                    // Check if this is a complete URL (for vidstreaming.xyz or other external services)
+                    if (localStorage.getItem(`shippudenEpisode_${episodeNumber}_fullUrl`)) {
+                        episodeLinks[episodeNumber] = localStorage.getItem(`shippudenEpisode_${episodeNumber}_fullUrl`);
+                    } else {
+                        // Assume it's a Google Drive file ID
+                        episodeLinks[episodeNumber] = `https://drive.google.com/file/d/${fileId}/view`;
+                    }
+                }
+            }
+            
+            return episodeLinks;
         }
         
         function getBorutoEpisodeLinks() {
-            return {
-                // Add Boruto episodes as they become available
-            };
+            // Get episode links from localStorage (these are stored when Boruto.html is loaded)
+            const episodesData = JSON.parse(localStorage.getItem('borutoEpisodes') || '{}');
+            const episodeLinks = {};
+            
+            // Create a map of episode numbers to their full links
+            for (const [episodeNumber, fileId] of Object.entries(episodesData)) {
+                if (fileId) {
+                    // Check if this is a complete URL (for vidstreaming.xyz or other external services)
+                    if (localStorage.getItem(`borutoEpisode_${episodeNumber}_fullUrl`)) {
+                        episodeLinks[episodeNumber] = localStorage.getItem(`borutoEpisode_${episodeNumber}_fullUrl`);
+                    } else {
+                        // Assume it's a Google Drive file ID
+                        episodeLinks[episodeNumber] = `https://drive.google.com/file/d/${fileId}/view`;
+                    }
+                }
+            }
+            
+            return episodeLinks;
         }
         
         // Update episode title and details
