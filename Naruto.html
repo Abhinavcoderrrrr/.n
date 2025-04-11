@@ -42,6 +42,97 @@
             border: 2px solid #FF6200;
         }
         
+        /* Season dropdown styling */
+        .season-dropdown-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .season-dropdown-card .card-header {
+            cursor: pointer;
+            padding: 15px 20px;
+            border-bottom: none;
+            transition: all 0.3s ease;
+        }
+        
+        .season-dropdown-card .card-header:hover {
+            background-color: #FFB74D !important;
+        }
+        
+        .dropdown-icon {
+            transition: transform 0.4s ease;
+            font-size: 1.2rem;
+        }
+        
+        .dropdown-icon.active {
+            transform: rotate(-180deg);
+        }
+        
+        .dropdown-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0;
+        }
+        
+        .dropdown-content.show {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .season-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .season-option {
+            display: flex;
+            padding: 12px 15px;
+            border-radius: 8px;
+            background-color: #FFF2E0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #FF6200;
+        }
+        
+        .season-option:hover {
+            background-color: #FFE0B2;
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .season-number {
+            font-weight: bold;
+            color: #FF6200;
+            margin-right: 15px;
+            padding: 5px 10px;
+            background-color: rgba(255, 98, 0, 0.1);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+        
+        .season-details {
+            flex: 1;
+        }
+        
+        .season-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .season-episodes {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+        
         .page-header {
             background-image: url('posternarutoclassic.jpg');
             background-size: cover;
@@ -254,6 +345,50 @@
         </div>
     </header>
 
+    <!-- Season/Arc Dropdown -->
+    <div class="container mb-4">
+        <div class="card season-dropdown-card">
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center" id="season-header" onclick="toggleDropdown()">
+                <h5 class="mb-0">Naruto Classic Seasons & Arcs</h5>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div>
+            <div class="card-body dropdown-content" id="season-content">
+                <div class="p-2">
+                    <div class="season-options">
+                        <div class="season-option" onclick="filterBySeason('1')">
+                            <div class="season-number">Season 1</div>
+                            <div class="season-details">
+                                <div class="season-name">Introduction & Land of Waves Arc</div>
+                                <div class="season-episodes">Episodes 1-52</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('2')">
+                            <div class="season-number">Season 2</div>
+                            <div class="season-details">
+                                <div class="season-name">Chunin Exams & Konoha Crush Arc</div>
+                                <div class="season-episodes">Episodes 53-104</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('3')">
+                            <div class="season-number">Season 3</div>
+                            <div class="season-details">
+                                <div class="season-name">Search for Tsunade & Land of Tea Arc</div>
+                                <div class="season-episodes">Episodes 105-156</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('4')">
+                            <div class="season-number">Season 4</div>
+                            <div class="season-details">
+                                <div class="season-name">Sasuke Retrieval & Filler Arcs</div>
+                                <div class="season-episodes">Episodes 157-220</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="container">
         <div class="row" id="episode-container">
@@ -321,57 +456,57 @@
             // Define Google Drive links for episodes - Include full URLs for easy updating
             const episodeLinks = {
                 1: "https://vidstreaming.xyz/v/V2RG6YD4QbI9/",
-                2: "https://drive.google.com/file/d/1pRd8-zvUoO4q7DjfG4rPFWy3MBgkjTgy/view?usp=sharing",
-                3: "https://drive.google.com/file/d/1YO2u9PiXaugCdMHK-LneZs9MD9JRAHOR/view?usp=sharing",
-                4: "https://drive.google.com/file/d/1QDdhEz8p0EX6MFF_DjIup3QBf5169hAY/view?usp=sharing",
-                5: "https://drive.google.com/file/d/1PeHszLrHpyNL43a1SnmMUIhasVq-PuAO/view?usp=sharing",
-                6: "https://drive.google.com/file/d/1aSUi1hy5jDtObU35fFTvIo9GX1Ny1lgU/view?usp=sharing",
-                7: "https://drive.google.com/file/d/1UIxj4uYYmXdOuh4mVMvLXqZwhMzcOM6h/view?usp=sharing",
-                8: "https://drive.google.com/file/d/1ObZno2NxTqZj8_o6lEnvdNDlMDXNqG-M/view?usp=sharing",
-                9: "https://drive.google.com/file/d/1OdNts24NfNwutvB6wFqDpYYiyJGOt-3k/view?usp=sharing",
-                10: "https://drive.google.com/file/d/1OhXTYTopPcUnupAp32rRIKQWnUvy4VcU/view?usp=sharing",
-                11: "https://drive.google.com/file/d/1P0C6dZMbb7nogNg1z08Vioup8BjCIrcp/view?usp=sharing",
-                12: "https://drive.google.com/file/d/1Ol8o0JcPtl23Z5HCwDPFrom7YHZUBF90/view?usp=sharing",
-                13: "https://drive.google.com/file/d/1P1epmQtlZT4yIs3GMo6lwVhh2b4IKmyF/view?usp=sharing",
-                14: "https://drive.google.com/file/d/1PA1N5KAf4HcOLadOsTTDe34Vykth316T/view?usp=sharing",
-                15: "https://drive.google.com/file/d/1PAL8yuUXwuazjr2EH40cRYZVmeEuGsPO/view?usp=sharing",
-                16: "https://drive.google.com/file/d/1Ohy0HNWSOn_G89SymkW7hMLI4Re-pZ2A/view?usp=sharing",
-                17: "https://drive.google.com/file/d/1PDLtaiw9a9Zmh5bSbUY0Ye1OtdueBxmo/view?usp=sharing",
-                18: "",
-                19: "",
-                20: "",
-                21: "",
-                22: "",
-                23: "",
-                24: "",
-                25: "",
-                26: "",
-                27: "",
-                28: "",
-                29: "",
-                30: "",
-                31: "",
-                32: "",
-                33: "",
-                34: "",
-                35: "",
-                36: "",
-                37: "",
-                38: "",
-                39: "",
-                40: "",
-                41: "",
-                42: "",
-                43: "",
-                44: "",
-                45: "",
-                46: "",
-                47: "",
-                48: "",
-                49: "",
-                50: "",
-                51: "",
-                52: "",
+                2: "https://vidstreaming.xyz/v/JPdjhxcflNYM/",
+                3: "https://vidstreaming.xyz/v/DvWqZ3LCH1L2/",
+                4: "https://vidstreaming.xyz/v/ywKpXc8VdC8k/",
+                5: "https://vidstreaming.xyz/v/DrDLIUVZE3bm/",
+                6: "https://vidstreaming.xyz/v/qBOtKaTM9Amz/",
+                7: "https://vidstreaming.xyz/v/BfLjrBLjzpJH/",
+                8: "https://vidstreaming.xyz/v/YJqONCjfwCL3/",
+                9: "https://vidstreaming.xyz/v/GkRreLaIBUFm/",
+                10: "https://vidstreaming.xyz/v/jcDxkKPhHe3X/",
+                11: "https://vidstreaming.xyz/v/j1QM6tM08G4f/",
+                12: "https://vidstreaming.xyz/v/YYPmwmT9EwY4/",
+                13: "https://vidstreaming.xyz/v/y9Sy8GWHt37e/",
+                14: "https://vidstreaming.xyz/v/CjKbAKEEVZMc/",
+                15: "https://vidstreaming.xyz/v/37HOG2kVSIQS/",
+                16: "https://vidstreaming.xyz/v/HrWwqYMg6kzi/",
+                17: "https://vidstreaming.xyz/v/GkMgglJhtblI/",
+                18: "https://vidstreaming.xyz/v/amd9KZ4HF3RZ/",
+                19: "https://vidstreaming.xyz/v/UBW3DedHL5Un/",
+                20: "https://vidstreaming.xyz/v/1c5lgt1rzdGo/",
+                21: "https://vidstreaming.xyz/v/EQffZtly6mey/",
+                22: "https://vidstreaming.xyz/v/VW3PimOLOnSD/",
+                23: "https://vidstreaming.xyz/v/1eVxVQtTWwX3/",
+                24: "https://vidstreaming.xyz/v/7853C9dRbGU6/",
+                25: "https://vidstreaming.xyz/v/BpUYMeIJba3l/",
+                26: "https://vidstreaming.xyz/v/De2FKG7BZCa7/",
+                27: "https://vidstreaming.xyz/v/ExZa9NOdyTPB/",
+                28: "https://vidstreaming.xyz/v/2wKyaZeLPrup/",
+                29: "https://vidstreaming.xyz/v/XvnCxZMDgwjv/",
+                30: "https://vidstreaming.xyz/v/7vteqzcuWaYR/",
+                31: "https://vidstreaming.xyz/v/qP3nCTWyzwiq/",
+                32: "https://vidstreaming.xyz/v/itI43jprfCK9/",
+                33: "https://vidstreaming.xyz/v/k9BwLfmA3jex/",
+                34: "https://vidstreaming.xyz/v/aNbAAnpUZxqL/",
+                35: "https://vidstreaming.xyz/v/KrorfH5aTIjl/",
+                36: "https://vidstreaming.xyz/v/4tu2BHcn3Dfb/",
+                37: "https://vidstreaming.xyz/v/po4lV5n725Z9/",
+                38: "https://vidstreaming.xyz/v/xrIJxpxJUGko/",
+                39: "https://vidstreaming.xyz/v/vxRjX81T8oaZ/",
+                40: "https://vidstreaming.xyz/v/XuqCkFd5tuS2/",
+                41: "https://vidstreaming.xyz/v/lI4NEy6iyTJC/",
+                42: "https://vidstreaming.xyz/v/CIKTvFaNqZPD/",
+                43: "https://vidstreaming.xyz/v/QNXIPaMKkq1n/",
+                44: "https://vidstreaming.xyz/v/ZXTp77GReebx/",
+                45: "https://vidstreaming.xyz/v/pGHjG5rCNYdk/",
+                46: "https://vidstreaming.xyz/v/KDcb8QPEkE50/",
+                47: "https://vidstreaming.xyz/v/3qV1J6SS1rOi/",
+                48: "https://vidstreaming.xyz/v/inm4wppNEeqo/",
+                49: "https://vidstreaming.xyz/v/MSKG9Fv3gFUo/",
+                50: "https://vidstreaming.xyz/v/yBhRVxMHWvwW/",
+                51: "https://vidstreaming.xyz/v/q3Qoop95qBhv/",
+                52: "https://vidstreaming.xyz/v/S82Gi1Ce9lSH/",
                 53: "",
                 54: "",
                 55: "",
@@ -584,6 +719,9 @@
             // Create episode data object from localStorage
             createEpisodeCards(narutoEpisodes);
 
+            // Filter episodes to show only Season 1 by default
+            filterBySeason('1');
+
             // Update episode counts in the navigation
             updateAllEpisodeCounts();
         });
@@ -792,6 +930,74 @@
 
             // Show confirmation
             alert('Subscription removed successfully.');
+        }
+
+        // Function to toggle the dropdown visibility
+        function toggleDropdown() {
+            const dropdownContent = document.getElementById('season-content');
+            const dropdownIcon = document.querySelector('.dropdown-icon');
+            
+            if (dropdownContent.classList.contains('show')) {
+                dropdownContent.classList.remove('show');
+                dropdownIcon.classList.remove('active');
+            } else {
+                dropdownContent.classList.add('show');
+                dropdownIcon.classList.add('active');
+            }
+        }
+
+        // Function to filter episodes by season and scroll to the first episode of that season
+        function filterBySeason(seasonNumber) {
+            const container = document.getElementById('episode-container');
+            const cards = container.querySelectorAll('.col-6');
+            
+            // Define episode ranges for each season
+            const seasonRanges = {
+                '1': { start: 1, end: 52 },
+                '2': { start: 53, end: 104 },
+                '3': { start: 105, end: 156 },
+                '4': { start: 157, end: 220 }
+            };
+            
+            const range = seasonRanges[seasonNumber];
+            
+            // Hide all episodes first
+            cards.forEach(card => {
+                card.style.display = 'none';
+            });
+            
+            // Show only episodes from the selected season
+            for (let i = range.start; i <= range.end; i++) {
+                const episodeCard = document.getElementById('episode-' + i);
+                if (episodeCard) {
+                    episodeCard.style.display = '';
+                }
+            }
+            
+            // Close the dropdown after selection
+            const dropdownContent = document.getElementById('season-content');
+            const dropdownIcon = document.querySelector('.dropdown-icon');
+            dropdownContent.classList.remove('show');
+            dropdownIcon.classList.remove('active');
+            
+            // Scroll to the first episode of the season
+            const firstEpisode = document.getElementById('episode-' + range.start);
+            if (firstEpisode) {
+                firstEpisode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Highlight the episode card
+                const card = firstEpisode.querySelector('.card');
+                if (card) {
+                    card.style.boxShadow = '0 0 15px 5px rgba(255, 165, 0, 0.7)';
+                    card.style.transform = 'translateY(-5px)';
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        card.style.boxShadow = '';
+                        card.style.transform = '';
+                    }, 3000);
+                }
+            }
         }
     </script>
 

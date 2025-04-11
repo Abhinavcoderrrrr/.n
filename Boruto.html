@@ -185,6 +185,97 @@
                 margin-right: -5px;
             }
         }
+
+        /* Season dropdown styling */
+        .season-dropdown-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .season-dropdown-card .card-header {
+            cursor: pointer;
+            padding: 15px 20px;
+            border-bottom: none;
+            transition: all 0.3s ease;
+        }
+        
+        .season-dropdown-card .card-header:hover {
+            background-color: #4C1D95 !important;
+        }
+        
+        .dropdown-icon {
+            transition: transform 0.4s ease;
+            font-size: 1.2rem;
+        }
+        
+        .dropdown-icon.active {
+            transform: rotate(-180deg);
+        }
+        
+        .dropdown-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0;
+        }
+        
+        .dropdown-content.show {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .season-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .season-option {
+            display: flex;
+            padding: 12px 15px;
+            border-radius: 8px;
+            background-color: #F5F3FF;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #4C1D95;
+        }
+        
+        .season-option:hover {
+            background-color: #EDE9FE;
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .season-number {
+            font-weight: bold;
+            color: #4C1D95;
+            margin-right: 15px;
+            padding: 5px 10px;
+            background-color: rgba(76, 29, 149, 0.1);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+        
+        .season-details {
+            flex: 1;
+        }
+        
+        .season-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .season-episodes {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
     </style>
 </head>
 <body>
@@ -227,6 +318,92 @@
             <p class="lead">Watch all 293 episodes of Boruto</p>
         </div>
     </header>
+
+    <!-- Season/Arc Dropdown -->
+    <div class="container mb-4">
+        <div class="card season-dropdown-card">
+            <div class="card-header d-flex justify-content-between align-items-center" id="season-header" onclick="toggleDropdown()" style="background-color: #3B0764; color: white;">
+                <h5 class="mb-0">Boruto Seasons & Arcs</h5>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div>
+            <div class="card-body dropdown-content" id="season-content">
+                <div class="p-2">
+                    <div class="season-options">
+                        <div class="season-option" onclick="filterBySeason('1')">
+                            <div class="season-number">Season 1</div>
+                            <div class="season-details">
+                                <div class="season-name">Academy Entrance & Nue Arc</div>
+                                <div class="season-episodes">Episodes 1-30</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('2')">
+                            <div class="season-number">Season 2</div>
+                            <div class="season-details">
+                                <div class="season-name">Sarada Uchiha & Hidden Mist Trip Arc</div>
+                                <div class="season-episodes">Episodes 31-60</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('3')">
+                            <div class="season-number">Season 3</div>
+                            <div class="season-details">
+                                <div class="season-name">Byakuya Gang & Chunin Exams Arc</div>
+                                <div class="season-episodes">Episodes 61-90</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('4')">
+                            <div class="season-number">Season 4</div>
+                            <div class="season-details">
+                                <div class="season-name">Mitsuki's Disappearance & Stone Village Arc</div>
+                                <div class="season-episodes">Episodes 91-120</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('5')">
+                            <div class="season-number">Season 5</div>
+                            <div class="season-details">
+                                <div class="season-name">One-Tails & Time Slip Arc</div>
+                                <div class="season-episodes">Episodes 121-150</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('6')">
+                            <div class="season-number">Season 6</div>
+                            <div class="season-details">
+                                <div class="season-name">Mujina Bandits & Kara Actuation Arc</div>
+                                <div class="season-episodes">Episodes 151-180</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('7')">
+                            <div class="season-number">Season 7</div>
+                            <div class="season-details">
+                                <div class="season-name">Vessel & Kawaki Arc</div>
+                                <div class="season-episodes">Episodes 181-210</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('8')">
+                            <div class="season-number">Season 8</div>
+                            <div class="season-details">
+                                <div class="season-name">Otsutsuki Awakening & Code Arc</div>
+                                <div class="season-episodes">Episodes 211-240</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('9')">
+                            <div class="season-number">Season 9</div>
+                            <div class="season-details">
+                                <div class="season-name">Two Blue Vortex & Himawari Arc</div>
+                                <div class="season-episodes">Episodes 241-270</div>
+                            </div>
+                        </div>
+                        <div class="season-option" onclick="filterBySeason('10')">
+                            <div class="season-number">Season 10</div>
+                            <div class="season-details">
+                                <div class="season-name">Final Battles & Conclusion Arc</div>
+                                <div class="season-episodes">Episodes 271-293</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <div class="container">
@@ -586,6 +763,9 @@
             // Create cards for available episodes
             createEpisodeCards(borutoEpisodes);
             
+            // Filter episodes to show only Season 1 by default
+            filterBySeason('1');
+            
             // Update episode counts in the navigation
             updateAllEpisodeCounts();
         });
@@ -747,6 +927,80 @@
             } else {
                 // No subscription
                 badge.style.display = 'none';
+            }
+        }
+
+        // Function to toggle the dropdown visibility
+        function toggleDropdown() {
+            const dropdownContent = document.getElementById('season-content');
+            const dropdownIcon = document.querySelector('.dropdown-icon');
+            
+            if (dropdownContent.classList.contains('show')) {
+                dropdownContent.classList.remove('show');
+                dropdownIcon.classList.remove('active');
+            } else {
+                dropdownContent.classList.add('show');
+                dropdownIcon.classList.add('active');
+            }
+        }
+
+        // Function to filter episodes by season and scroll to the first episode of that season
+        function filterBySeason(seasonNumber) {
+            const container = document.getElementById('episode-container');
+            const cards = container.querySelectorAll('.col-6');
+            
+            // Define episode ranges for each season
+            const seasonRanges = {
+                '1': { start: 1, end: 30 },
+                '2': { start: 31, end: 60 },
+                '3': { start: 61, end: 90 },
+                '4': { start: 91, end: 120 },
+                '5': { start: 121, end: 150 },
+                '6': { start: 151, end: 180 },
+                '7': { start: 181, end: 210 },
+                '8': { start: 211, end: 240 },
+                '9': { start: 241, end: 270 },
+                '10': { start: 271, end: 293 }
+            };
+            
+            const range = seasonRanges[seasonNumber];
+            
+            // Hide all episodes first
+            cards.forEach(card => {
+                card.style.display = 'none';
+            });
+            
+            // Show only episodes from the selected season
+            for (let i = range.start; i <= range.end; i++) {
+                const episodeCard = document.getElementById('episode-' + i);
+                if (episodeCard) {
+                    episodeCard.style.display = '';
+                }
+            }
+            
+            // Close the dropdown after selection
+            const dropdownContent = document.getElementById('season-content');
+            const dropdownIcon = document.querySelector('.dropdown-icon');
+            dropdownContent.classList.remove('show');
+            dropdownIcon.classList.remove('active');
+            
+            // Scroll to the first episode of the season
+            const firstEpisode = document.getElementById('episode-' + range.start);
+            if (firstEpisode) {
+                firstEpisode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Highlight the episode card
+                const card = firstEpisode.querySelector('.card');
+                if (card) {
+                    card.style.boxShadow = '0 0 15px 5px rgba(76, 29, 149, 0.7)';
+                    card.style.transform = 'translateY(-5px)';
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        card.style.boxShadow = '';
+                        card.style.transform = '';
+                    }, 3000);
+                }
             }
         }
     </script>
