@@ -616,21 +616,27 @@
                     timestamp: new Date().toISOString()
                 };
                 
-                // Remove duplicates (if this episode was watched before)
-                watchHistory = watchHistory.filter(entry => 
-                    !(entry.series === currentSeries && entry.episodeNumber === currentEpisode)
+                // Check if we already have this episode in history
+                const existingIndex = watchHistory.findIndex(entry => 
+                    entry.series === currentSeries && parseInt(entry.episodeNumber) === parseInt(currentEpisode)
                 );
+                
+                // If we have this episode, remove it first (so we can add it to the front)
+                if (existingIndex !== -1) {
+                    watchHistory.splice(existingIndex, 1);
+                }
                 
                 // Add new entry at the beginning
                 watchHistory.unshift(historyEntry);
                 
-                // Keep only the last 20 entries
-                if (watchHistory.length > 20) {
-                    watchHistory = watchHistory.slice(0, 20);
+                // Keep only the last 50 entries to not overload localStorage
+                if (watchHistory.length > 50) {
+                    watchHistory = watchHistory.slice(0, 50);
                 }
                 
                 // Save back to localStorage
                 localStorage.setItem('narutoWatchHistory', JSON.stringify(watchHistory));
+                console.log('Saved to watch history:', historyEntry);
             } catch (error) {
                 console.error('Error saving to history:', error);
                 // Non-critical error, don't disrupt the user experience

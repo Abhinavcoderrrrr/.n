@@ -55,19 +55,26 @@
             padding: 15px 20px;
             border-bottom: none;
             transition: all 0.3s ease;
+            background-color: #FF6200;
+            color: white;
         }
-        
         .season-dropdown-card .card-header:hover {
-            background-color: #FFB74D !important;
+            background-color: #FF9800 !important;
+            color: white;
         }
         
         .dropdown-icon {
             transition: transform 0.4s ease;
             font-size: 1.2rem;
+            color: white;
         }
         
         .dropdown-icon.active {
             transform: rotate(-180deg);
+        }
+        
+        .season-dropdown-card .card-header:hover .dropdown-icon {
+            color: #333;
         }
         
         .dropdown-content {
@@ -95,16 +102,22 @@
             display: flex;
             padding: 12px 15px;
             border-radius: 8px;
-            background-color: #FFF2E0;
+            background-color: #fff2e0;
             cursor: pointer;
             transition: all 0.3s ease;
             border-left: 4px solid #FF6200;
+            color: rgb(0, 0, 0);
         }
         
         .season-option:hover {
-            background-color: #FFE0B2;
+            background-color: #ffe0b2;
             transform: translateX(5px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #000000;
+        }
+        
+        .season-option:hover .season-number {
+            background-color: #ffd3a0;
         }
         
         .season-number {
@@ -112,27 +125,35 @@
             color: #FF6200;
             margin-right: 15px;
             padding: 5px 10px;
-            background-color: rgba(255, 98, 0, 0.1);
+            background-color: #ffe3c9;
             border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
             min-width: 80px;
+            transition: all 0.3s ease;
         }
-        
         .season-details {
             flex: 1;
         }
         
         .season-name {
             font-weight: 600;
-            color: #333;
+            color: rgb(0, 0, 0);
         }
         
         .season-episodes {
-            color: #666;
+            color: #333;
             font-size: 0.9rem;
             margin-top: 3px;
+        }
+        
+        .season-option:hover .season-name {
+            color: #333;
+        }
+        
+        .season-option:hover .season-episodes {
+            color: #555;
         }
         
         .page-header {
@@ -306,6 +327,135 @@
                 visibility: visible;
             }
         }
+        
+        /* Current season display */
+        .current-season-display {
+            background-color: rgba(255, 98, 0, 0.1);
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #FF6200;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        #current-season-text {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Custom popup styles */
+        .custom-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .custom-popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .custom-popup {
+            background-color: #fff;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            padding: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+            overflow: hidden;
+        }
+        
+        .custom-popup-overlay.active .custom-popup {
+            transform: translateY(0);
+        }
+        
+        .custom-popup-header {
+            background-color: #FF6200;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        
+        .custom-popup-content {
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .custom-popup-actions {
+            display: flex;
+            padding: 0 20px 20px;
+        }
+        
+        .custom-popup-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        
+        .custom-popup-actions button.confirm-btn {
+            background-color: #FF6200;
+            color: white;
+            margin-right: 10px;
+        }
+        
+        .custom-popup-actions button.cancel-btn {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .custom-popup-actions button.confirm-btn:hover {
+            background-color: #e05800;
+        }
+        
+        .custom-popup-actions button.cancel-btn:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .custom-popup-actions button.ok-btn {
+            background-color: #FF6200;
+            color: white;
+            width: 100%;
+        }
+        
+        .custom-popup-actions button.ok-btn:hover {
+            background-color: #e05800;
+        }
+        
+        @media (max-width: 576px) {
+            .custom-popup {
+                width: 95%;
+            }
+            
+            .custom-popup-actions {
+                flex-direction: column;
+            }
+            
+            .custom-popup-actions button.confirm-btn {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -359,7 +509,7 @@
     <!-- Season/Arc Dropdown -->
     <div class="container mb-4">
         <div class="card season-dropdown-card">
-            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center" id="season-header" onclick="toggleDropdown()">
+            <div class="card-header d-flex justify-content-between align-items-center" id="season-header" onclick="toggleDropdown()">
                 <h5 class="mb-0">Naruto Classic Seasons & Arcs</h5>
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
@@ -397,6 +547,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <!-- Current Season Display -->
+        <div class="current-season-display">
+            <span id="current-season-text">Season 1: Introduction & Land of Waves Arc</span>
         </div>
     </div>
 
@@ -442,6 +596,67 @@
 
     <!-- Episode Data and Card Generation -->
     <script>
+        // Custom popup functions
+        function showCustomConfirm(message, title = "Confirmation", onConfirm, onCancel) {
+            // Set the message and title
+            document.getElementById('confirm-popup-message').textContent = message;
+            document.getElementById('confirm-popup-title').textContent = title;
+            
+            // Show the popup
+            const overlay = document.getElementById('confirm-popup-overlay');
+            overlay.classList.add('active');
+            
+            // Set up button event listeners
+            const yesButton = document.getElementById('confirm-popup-yes');
+            const noButton = document.getElementById('confirm-popup-no');
+            
+            // Remove any existing event listeners
+            const newYesButton = yesButton.cloneNode(true);
+            const newNoButton = noButton.cloneNode(true);
+            yesButton.parentNode.replaceChild(newYesButton, yesButton);
+            noButton.parentNode.replaceChild(newNoButton, noButton);
+            
+            // Add new event listeners
+            newYesButton.addEventListener('click', function() {
+                overlay.classList.remove('active');
+                if (typeof onConfirm === 'function') {
+                    onConfirm();
+                }
+            });
+            
+            newNoButton.addEventListener('click', function() {
+                overlay.classList.remove('active');
+                if (typeof onCancel === 'function') {
+                    onCancel();
+                }
+            });
+        }
+        
+        function showCustomAlert(message, title = "Notification", onOk) {
+            // Set the message and title
+            document.getElementById('alert-popup-message').textContent = message;
+            document.getElementById('alert-popup-title').textContent = title;
+            
+            // Show the popup
+            const overlay = document.getElementById('alert-popup-overlay');
+            overlay.classList.add('active');
+            
+            // Set up button event listener
+            const okButton = document.getElementById('alert-popup-ok');
+            
+            // Remove any existing event listeners
+            const newOkButton = okButton.cloneNode(true);
+            okButton.parentNode.replaceChild(newOkButton, okButton);
+            
+            // Add new event listener
+            newOkButton.addEventListener('click', function() {
+                overlay.classList.remove('active');
+                if (typeof onOk === 'function') {
+                    onOk();
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             console.log("DOM Content Loaded - Initializing Naruto page");
 
@@ -452,7 +667,7 @@
             document.getElementById('remove-subscription').addEventListener('click', function (e) {
                 e.stopPropagation(); // Prevent event bubbling
 
-                if (confirm('Are you sure you want to remove your premium subscription?')) {
+                showCustomConfirm('Are you sure you want to remove your premium subscription?', 'Remove Subscription', function() {
                     // Remove subscription from localStorage
                     localStorage.removeItem('narutoSubscription');
 
@@ -460,8 +675,8 @@
                     document.getElementById('subscription-badge').style.display = 'none';
 
                     // Show confirmation
-                    alert('Your premium subscription has been removed.');
-                }
+                    showCustomAlert('Your premium subscription has been removed.', 'Subscription Removed');
+                });
             });
 
             // Define Google Drive links for episodes - Include full URLs for easy updating
@@ -929,7 +1144,7 @@
             updateSubscriptionBadge();
 
             // Show confirmation
-            alert(`Subscription created successfully! Valid for ${hours} hours.`);
+            showCustomAlert(`Subscription created successfully! Valid for ${hours} hours.`, 'Subscription Created');
         }
 
         function removeSubscription() {
@@ -940,7 +1155,7 @@
             document.getElementById('subscription-badge').style.display = 'none';
 
             // Show confirmation
-            alert('Subscription removed successfully.');
+            showCustomAlert('Subscription removed successfully.', 'Subscription Removed');
         }
 
         // Function to toggle the dropdown visibility
@@ -964,10 +1179,10 @@
             
             // Define episode ranges for each season
             const seasonRanges = {
-                '1': { start: 1, end: 52 },
-                '2': { start: 53, end: 104 },
-                '3': { start: 105, end: 156 },
-                '4': { start: 157, end: 220 }
+                '1': { start: 1, end: 52, name: "Season 1: Introduction & Land of Waves Arc" },
+                '2': { start: 53, end: 104, name: "Season 2: Chunin Exams & Konoha Crush Arc" },
+                '3': { start: 105, end: 156, name: "Season 3: Search for Tsunade & Land of Tea Arc" },
+                '4': { start: 157, end: 220, name: "Season 4: Sasuke Retrieval & Filler Arcs" }
             };
             
             const range = seasonRanges[seasonNumber];
@@ -991,12 +1206,12 @@
             dropdownContent.classList.remove('show');
             dropdownIcon.classList.remove('active');
             
-            // Scroll to the first episode of the season
+            // Update the current season text
+            document.getElementById('current-season-text').textContent = range.name;
+            
+            // Highlight the first episode card without scrolling to it
             const firstEpisode = document.getElementById('episode-' + range.start);
             if (firstEpisode) {
-                firstEpisode.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-                // Highlight the episode card
                 const card = firstEpisode.querySelector('.card');
                 if (card) {
                     card.style.boxShadow = '0 0 15px 5px rgba(255, 165, 0, 0.7)';
@@ -1015,6 +1230,36 @@
     <!-- Bootstrap JS and Icons -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+    <!-- Custom Popup Dialogs -->
+    <div class="custom-popup-overlay" id="confirm-popup-overlay">
+        <div class="custom-popup">
+            <div class="custom-popup-header">
+                <span id="confirm-popup-title">Confirmation</span>
+            </div>
+            <div class="custom-popup-content">
+                <p id="confirm-popup-message">Are you sure you want to proceed?</p>
+            </div>
+            <div class="custom-popup-actions">
+                <button class="confirm-btn" id="confirm-popup-yes">Yes</button>
+                <button class="cancel-btn" id="confirm-popup-no">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-popup-overlay" id="alert-popup-overlay">
+        <div class="custom-popup">
+            <div class="custom-popup-header">
+                <span id="alert-popup-title">Notification</span>
+            </div>
+            <div class="custom-popup-content">
+                <p id="alert-popup-message">Operation completed successfully.</p>
+            </div>
+            <div class="custom-popup-actions">
+                <button class="ok-btn" id="alert-popup-ok">OK</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html> 
